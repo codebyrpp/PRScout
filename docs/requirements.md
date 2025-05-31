@@ -43,7 +43,7 @@ The GitHub Pull Request Notifier is a browser extension that notifies users in r
 
 ### 2.6. Bookmarks Integration
 
-- **FR6.1**: The extension shall create a special bookmarks folder in the browser to save URLs of pull requests.
+- **FR6.1**: The extension shall create a special bookmarks folder in the browser to save URLs of pull requests. For enhanced accessibility, this folder should be programmatically placed on the browser's bookmarks toolbar if such functionality is supported by the browser's extension API.
 - **FR6.2**: When a notification is received for a PR assignment, the PR URL is automatically added as a bookmark in this folder.
 - **FR6.3**: When a PR is closed or unassigned from the user, the corresponding bookmark is silently removed from the folder.
 

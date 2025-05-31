@@ -60,12 +60,82 @@ async function getOrCreateBookmarkFolderId() {
   return new Promise((resolve) => {
     chrome.bookmarks.search({ title: BOOKMARK_FOLDER_TITLE }, (results) => {
       if (results.length > 0) {
+        console.log(
+          `Found existing bookmark folder "${BOOKMARK_FOLDER_TITLE}" with ID: ${results[0].id}`
+        );
         resolve(results[0].id);
       } else {
-        chrome.bookmarks.create({ title: BOOKMARK_FOLDER_TITLE }, (folder) => {
-          console.log("Created bookmark folder:", BOOKMARK_FOLDER_TITLE);
-          resolve(folder.id);
-        });
+        let preferredParentId = null;
+        // Heuristic to determine browser type for specific parent IDs
+        // chrome.runtime.getURL("") returns something like:
+        // chrome-extension://<extension-id>/
+        // moz-extension://<extension-uuid>/
+        const currentUrlScheme = chrome.runtime.getURL("").split(":")[0];
+
+        if (currentUrlScheme === "chrome-extension") {
+          // Chrome or Chromium-based (e.g., Edge, Opera, Zen)
+          preferredParentId = "1"; // Standard ID for the Bookmarks Bar in Chrome/Chromium
+          console.log(
+            "Detected Chromium-based browser. Preferred parent ID for bookmarks: '1'"
+          );
+        } else if (currentUrlScheme === "moz-extension") {
+          // Firefox
+          preferredParentId = "toolbar_____"; // Standard ID for the Bookmarks Toolbar in Firefox
+          console.log(
+            "Detected Firefox browser. Preferred parent ID for bookmarks: 'toolbar_____'"
+          );
+        } else {
+          console.log(
+            "Could not determine specific toolbar ID for this browser. Folder will be created in default location if preferred method fails."
+          );
+        }
+
+        const createFolderAttempt = (parentIdToTry) => {
+          const bookmarkDetails = { title: BOOKMARK_FOLDER_TITLE };
+          if (parentIdToTry) {
+            bookmarkDetails.parentId = parentIdToTry;
+          }
+
+          chrome.bookmarks.create(bookmarkDetails, (folder) => {
+            if (chrome.runtime.lastError) {
+              console.warn(
+                `Error creating bookmark folder "${BOOKMARK_FOLDER_TITLE}" with parentId "${parentIdToTry}": ${chrome.runtime.lastError.message}.`
+              );
+              // If a preferred parentId was tried and failed, and it wasn't null (meaning it was the first attempt with a specific toolbar ID),
+              // then fallback to creating in the default location.
+              if (parentIdToTry !== null) {
+                console.log(
+                  `Falling back to creating folder "${BOOKMARK_FOLDER_TITLE}" in default location.`
+                );
+                createFolderAttempt(null); // Recursive call for fallback to default location
+              } else {
+                // This means even creating in the default location (parentIdToTry was null) failed.
+                console.error(
+                  `Failed to create bookmark folder "${BOOKMARK_FOLDER_TITLE}" even in default location.`
+                );
+                resolve(null); // Indicate failure to create the folder
+              }
+            } else {
+              console.log(
+                `Successfully created bookmark folder "${BOOKMARK_FOLDER_TITLE}" (ID: ${
+                  folder.id
+                })${
+                  parentIdToTry
+                    ? ` under parent ID "${parentIdToTry}" (attempted toolbar placement)`
+                    : " in default location"
+                }.`
+              );
+              resolve(folder.id);
+            }
+          });
+        };
+
+        console.log(
+          `Attempting to create bookmark folder "${BOOKMARK_FOLDER_TITLE}". Preferred parent ID for toolbar: ${
+            preferredParentId || "none (will use default location)"
+          }`
+        );
+        createFolderAttempt(preferredParentId);
       }
     });
   });
