@@ -11,26 +11,39 @@
     />
   </head>
   <body>
-    <h1>PullRadar</h1>
-    <div id="user-status">
-      <img
-        id="user-avatar"
-        src=""
-        alt="User Avatar"
-        style="
-          display: none;
-          width: 32px;
-          height: 32px;
-          border-radius: 50%;
-          margin-right: 8px;
-        "
-      />
-      <p id="user-info">Loading user information...</p>
-      <button id="options-button" style="display: none; margin-left: auto">
-        Configure Token
-      </button>
+    <div
+      id="header-container"
+      style="
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      "
+    >
+      <h1>PullRadar</h1>
+      <div id="user-status-area" style="display: flex; align-items: center">
+        <p
+          id="user-status-message"
+          style="margin: 0 8px 0 0; display: none; color: #586069"
+        ></p>
+        <img
+          id="user-avatar"
+          src=""
+          alt="User Avatar"
+          style="
+            display: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin-right: 8px;
+          "
+        />
+        <button id="options-button" style="display: none">
+          Configure Token
+        </button>
+      </div>
     </div>
-    <hr />
+    <hr style="margin-top: 0" />
     <div id="pr-summary">
       <p>Open the options to set your GitHub Token and preferences.</p>
       <p><button id="open-options-page">Open Options</button></p>

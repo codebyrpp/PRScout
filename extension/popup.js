@@ -2,7 +2,10 @@
 document.addEventListener("DOMContentLoaded", async () => {
   console.log("PullRadar popup loaded.");
 
-  const userInfoP = document.getElementById("user-info");
+  // const userInfoP = document.getElementById("user-info"); // No longer used directly for detailed user name/login
+  // const userLoginP = document.getElementById("user-login"); // Removed
+  // const userNameP = document.getElementById("user-name");   // Removed
+  const userStatusMessageP = document.getElementById("user-status-message");
   const optionsButton = document.getElementById("options-button"); // For re-configuring token
   const openOptionsPageButton = document.getElementById("open-options-page");
   const userAvatarImg = document.getElementById("user-avatar"); // Added for avatar
@@ -31,34 +34,48 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const pat = await getGitHubPAT(); // from auth.js, included in popup.html
     if (!pat) {
-      userInfoP.textContent = "GitHub PAT not set.";
-      optionsButton.style.display = "inline-block";
-      optionsButton.textContent = "Set PAT in Options";
-      prSummaryDiv.style.display = "block";
-      prListContainer.style.display = "none";
-      prCountSpan.textContent = "(0)"; // Reset count on no PAT
+      if (userStatusMessageP) {
+        userStatusMessageP.textContent = "GitHub PAT not set.";
+        userStatusMessageP.style.display = "inline";
+      }
+      if (userAvatarImg) userAvatarImg.style.display = "none";
+
+      if (optionsButton) {
+        optionsButton.style.display = "inline-block";
+        optionsButton.textContent = "Set PAT in Options";
+      }
+      // if (userInfoP) userInfoP.style.display = "none"; // Old element, ensure it's hidden if it still exists by mistake
+      if (prSummaryDiv) prSummaryDiv.style.display = "block";
+      if (prListContainer) prListContainer.style.display = "none";
+      if (prCountSpan) prCountSpan.textContent = "(0)";
       return;
     }
 
-    optionsButton.style.display = "none"; // Hide if PAT is present initially
-    prSummaryDiv.style.display = "none"; // Hide initial summary
+    if (optionsButton) optionsButton.style.display = "none";
+    if (prSummaryDiv) prSummaryDiv.style.display = "none";
+    // if (userInfoP) userInfoP.style.display = "none"; // Old element
 
-    // Try to get user info using the PAT (also validates PAT roughly)
-    // `fetchUserDetails` is in auth.js, which should be loaded before popup.js
-    userInfoP.textContent = "Fetching user info...";
-    const user = await fetchUserDetails(); // from auth.js
+    if (userStatusMessageP) {
+      userStatusMessageP.textContent = "Fetching user info...";
+      userStatusMessageP.style.display = "inline";
+    }
+    const user = await fetchUserDetails();
 
     if (user && user.login) {
-      userInfoP.textContent = `User: ${user.login}`;
-      if (user.avatar_url) {
-        userAvatarImg.src = user.avatar_url;
-        userAvatarImg.style.display = "inline-block";
-      } else {
-        userAvatarImg.style.display = "none";
+      // We still need user.login for fetching PRs
+      if (userStatusMessageP) userStatusMessageP.style.display = "none"; // Hide status message if successful
+
+      if (userAvatarImg) {
+        if (user.avatar_url) {
+          userAvatarImg.src = user.avatar_url;
+          userAvatarImg.style.display = "inline-block";
+        } else {
+          userAvatarImg.style.display = "none";
+        }
       }
-      prListContainer.style.display = "block";
-      prListUl.innerHTML = "<li>Loading PRs...</li>"; // Clear previous list
-      prCountSpan.textContent = "(...)"; // Indicate loading count
+      if (prListContainer) prListContainer.style.display = "block";
+      if (prListUl) prListUl.innerHTML = "<li>Loading PRs...</li>";
+      if (prCountSpan) prCountSpan.textContent = "(...)";
 
       const assignedPRs = await fetchAssignedPRs(user.login); // from auth.js
 
@@ -88,14 +105,18 @@ document.addEventListener("DOMContentLoaded", async () => {
         prCountSpan.textContent = "(Error)"; // Indicate error in count
       }
     } else {
-      userInfoP.textContent =
-        "Invalid PAT or could not fetch user. Please check options.";
-      optionsButton.style.display = "inline-block";
-      optionsButton.textContent = "Check PAT in Options";
-      userAvatarImg.style.display = "none"; // Hide avatar on error
-      prListContainer.style.display = "none";
-      prSummaryDiv.style.display = "block"; // Show summary again
-      prCountSpan.textContent = "(0)"; // Reset count on error/no PAT
+      if (userStatusMessageP) {
+        userStatusMessageP.textContent = "Invalid PAT or error fetching user.";
+        userStatusMessageP.style.display = "inline";
+      }
+      if (userAvatarImg) userAvatarImg.style.display = "none";
+      if (optionsButton) {
+        optionsButton.style.display = "inline-block";
+        optionsButton.textContent = "Check PAT";
+      }
+      if (prListContainer) prListContainer.style.display = "none";
+      if (prSummaryDiv) prSummaryDiv.style.display = "block";
+      if (prCountSpan) prCountSpan.textContent = "(0)";
     }
   }
 
