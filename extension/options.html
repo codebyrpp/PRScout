@@ -3,12 +3,17 @@
   <head>
     <title>PullRadar Options</title>
     <meta charset="utf-8" />
-    <link rel="stylesheet" href="options.css" />
+    <link rel="stylesheet" href="./styles/options.css" />
+    <link
+      rel="stylesheet"
+      href="./styles/options-dark.css"
+      media="(prefers-color-scheme: dark)"
+    />
   </head>
   <body>
     <h1>PullRadar Options</h1>
 
-    <div>
+    <div class="form-group">
       <label for="github-pat">GitHub Personal Access Token:</label>
       <input type="password" id="github-pat" name="github-pat" size="50" />
       <p class="info">
@@ -17,7 +22,7 @@
       </p>
     </div>
 
-    <div>
+    <div class="form-group">
       <label for="polling-interval">Polling Interval (seconds):</label>
       <input
         type="number"

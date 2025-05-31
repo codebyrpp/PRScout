@@ -1,0 +1,48 @@
+body {
+  background-color: #0d1117;
+  color: #c9d1d9;
+}
+
+h1 {
+  color: #c9d1d9;
+}
+
+#user-status p,
+#pr-summary p {
+  color: #c9d1d9;
+}
+
+button {
+  background-color: #238636;
+  color: #ffffff;
+  border: 1px solid rgba(240, 246, 252, 0.1);
+}
+
+button:hover {
+  background-color: #2ea043;
+}
+
+hr {
+  border-top-color: #30363d;
+}
+
+#pr-list-container h3 {
+  color: #c9d1d9;
+}
+
+#pr-list li {
+  background-color: #161b22;
+  border-color: #30363d;
+}
+
+#pr-list li a {
+  color: #58a6ff;
+}
+
+#pr-list li span {
+  color: #8b949e;
+}
+
+#no-prs-message {
+  color: #8b949e;
+}
