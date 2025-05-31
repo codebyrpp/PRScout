@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const prListContainer = document.getElementById("pr-list-container");
   const noPRsMessage = document.getElementById("no-prs-message");
   const prSummaryDiv = document.getElementById("pr-summary");
+  const prCountSpan = document.getElementById("pr-count"); // Added for PR count
 
   function openOptions() {
     chrome.runtime.openOptionsPage();
@@ -35,6 +36,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       optionsButton.textContent = "Set PAT in Options";
       prSummaryDiv.style.display = "block";
       prListContainer.style.display = "none";
+      prCountSpan.textContent = "(0)"; // Reset count on no PAT
       return;
     }
 
@@ -56,12 +58,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
       prListContainer.style.display = "block";
       prListUl.innerHTML = "<li>Loading PRs...</li>"; // Clear previous list
+      prCountSpan.textContent = "(...)"; // Indicate loading count
 
       const assignedPRs = await fetchAssignedPRs(user.login); // from auth.js
 
       if (assignedPRs && assignedPRs.length > 0) {
         prListUl.innerHTML = ""; // Clear "Loading..."
         noPRsMessage.style.display = "none";
+        prCountSpan.textContent = `(${assignedPRs.length})`; // Update count
         assignedPRs.forEach((pr) => {
           const listItem = document.createElement("li");
           const prLink = document.createElement("a");
@@ -76,10 +80,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Empty array means no PRs, not an error
         prListUl.innerHTML = "";
         noPRsMessage.style.display = "block";
+        prCountSpan.textContent = "(0)"; // Update count to 0
       } else {
         // Null or undefined means an error occurred during fetch
         prListUl.innerHTML = "<li>Could not load PRs. Check console.</li>";
         noPRsMessage.style.display = "none";
+        prCountSpan.textContent = "(Error)"; // Indicate error in count
       }
     } else {
       userInfoP.textContent =
@@ -89,6 +95,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       userAvatarImg.style.display = "none"; // Hide avatar on error
       prListContainer.style.display = "none";
       prSummaryDiv.style.display = "block"; // Show summary again
+      prCountSpan.textContent = "(0)"; // Reset count on error/no PAT
     }
   }
 

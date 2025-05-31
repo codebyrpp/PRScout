@@ -53,6 +53,14 @@ The GitHub Pull Request Notifier is a browser extension that notifies users in r
 - **FR7.2**: The extension must handle GitHub API rate limits gracefully and provide clear error messages if the limit is reached.
 - **FR7.3**: Documentation must be provided to guide users on how to generate and use a GitHub personal access token (if required) and how to configure the extension.
 
+### 2.8. User Interface
+
+- **FR8.1**: The extension must have a popup that displays the user's GitHub username and avatar.
+- **FR8.2**: The popup must have a button to open the options page.
+- **FR8.3**: The popup must have a list of pull requests assigned to the user.
+- **FR8.4**: The number of pull requests assigned to the user must be displayed in the popup.
+- **FR8.5**: The number of pull requests assigned to the user must be show next to the extension icon in the browser toolbar.
+
 ---
 
 ## 3. Non-Functional Requirements

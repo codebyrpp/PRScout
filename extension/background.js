@@ -213,6 +213,8 @@ async function checkPRs() {
       message:
         "Please configure your GitHub Personal Access Token in the extension options.",
     });
+    chrome.action.setBadgeText({ text: "!" }); // Set badge to ! if PAT is missing
+    chrome.action.setBadgeBackgroundColor({ color: "#D73A49" }); // Red color for error
     chrome.alarms.clear(PR_CHECK_ALARM_NAME); // Stop alarm until PAT is set
     console.log("Cleared PR Check alarm due to missing PAT.");
     return;
@@ -242,6 +244,7 @@ async function checkPRs() {
 
   const bookmarkFolderId = await getOrCreateBookmarkFolderId();
 
+  let assignedPRCount = 0;
   for (const pr of assignedPRs) {
     if (
       pr &&
@@ -249,7 +252,7 @@ async function checkPRs() {
       pr.assignee &&
       pr.assignee.login === currentUserLogin
     ) {
-      // Double check assignment
+      assignedPRCount++; // Increment count
       currentPRUrls.add(pr.html_url);
       if (!knownPRUrls.includes(pr.html_url)) {
         newPRs.push(pr);
@@ -267,6 +270,12 @@ async function checkPRs() {
   } else {
     console.log("No new PRs assigned since last check.");
   }
+
+  // Update badge text with the total number of assigned PRs
+  chrome.action.setBadgeText({
+    text: assignedPRCount > 0 ? String(assignedPRCount) : "",
+  });
+  chrome.action.setBadgeBackgroundColor({ color: "#0366D6" }); // GitHub blue-ish color
 
   // FR6.3: When a PR is closed or unassigned from the user, the corresponding bookmark is silently removed.
   // This means we need to find which of the `knownPRUrls` are NOT in `currentPRUrls`
