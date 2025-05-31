@@ -82,5 +82,51 @@
     <script src="browser-polyfill.min.js"></script>
     <script src="auth.js"></script>
     <script src="popup.js"></script>
+
+    <div id="options-panel" class="options-panel-hidden">
+      <div class="options-panel-header">
+        <button
+          id="back-options-panel"
+          title="Back to Popup"
+          class="panel-header-button"
+        >
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+            <use href="assets/icons.svg#icon-back-arrow"></use>
+          </svg>
+        </button>
+        <h2>PullRadar Options</h2>
+        <span class="panel-header-spacer"></span>
+      </div>
+      <div class="options-panel-content">
+        <div class="form-group">
+          <label for="popup-github-pat">GitHub Personal Access Token:</label>
+          <input
+            type="password"
+            id="popup-github-pat"
+            name="popup-github-pat"
+            size="35"
+          />
+          <p class="info">
+            Required for accessing GitHub API. Ensure it has 'repo' and
+            'notifications' scopes.
+          </p>
+        </div>
+        <div class="form-group">
+          <label for="popup-polling-interval"
+            >Polling Interval (seconds):</label
+          >
+          <input
+            type="number"
+            id="popup-polling-interval"
+            name="popup-polling-interval"
+            min="10"
+            value="60"
+          />
+          <p class="info">Minimum 10 seconds. Default is 60 seconds.</p>
+        </div>
+        <button id="popup-save-options">Save Options</button>
+        <div id="popup-status" class="status-message"></div>
+      </div>
+    </div>
   </body>
 </html>

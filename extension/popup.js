@@ -16,15 +16,111 @@ document.addEventListener("DOMContentLoaded", async () => {
   const prSummaryDiv = document.getElementById("pr-summary");
   const prCountSpan = document.getElementById("pr-count"); // Added for PR count
 
+  // Options Panel Elements
+  const optionsPanel = document.getElementById("options-panel");
+  const backOptionsPanelButton = document.getElementById("back-options-panel"); // New back button
+  const patInput = document.getElementById("popup-github-pat");
+  const intervalInput = document.getElementById("popup-polling-interval");
+  const saveButton = document.getElementById("popup-save-options");
+  const statusDiv = document.getElementById("popup-status");
+
+  // Function to open/close options panel
+  function toggleOptionsPanel() {
+    if (optionsPanel) {
+      optionsPanel.classList.toggle("options-panel-visible");
+      if (optionsPanel.classList.contains("options-panel-visible")) {
+        loadOptionsIntoPanel(); // Load current settings when panel opens
+      }
+    }
+  }
+
+  // Load options into the panel
+  async function loadOptionsIntoPanel() {
+    const currentPat = await getGitHubPAT(); // from auth.js
+    if (patInput && currentPat) {
+      patInput.value = currentPat;
+    }
+    chrome.storage.sync.get({ pollingInterval: 60 }, (data) => {
+      if (intervalInput) {
+        intervalInput.value = data.pollingInterval;
+      }
+    });
+    if (statusDiv) statusDiv.textContent = ""; // Clear status on load
+  }
+
+  // Save options from the panel
+  async function saveOptionsFromPanel() {
+    const pat = patInput.value.trim();
+    const interval = parseInt(intervalInput.value, 10);
+
+    if (!pat) {
+      if (statusDiv) {
+        statusDiv.textContent = "Error: GitHub PAT cannot be empty.";
+        statusDiv.className = "status-message error";
+      }
+      return;
+    }
+
+    if (isNaN(interval) || interval < 10) {
+      if (statusDiv) {
+        statusDiv.textContent =
+          "Error: Polling interval must be at least 10 seconds.";
+        statusDiv.className = "status-message error";
+      }
+      return;
+    }
+
+    await setGitHubPAT(pat); // from auth.js
+    chrome.storage.sync.set({ pollingInterval: interval }, () => {
+      if (statusDiv) {
+        statusDiv.textContent = "Options saved successfully!";
+        statusDiv.className = "status-message"; // Reset to default color
+      }
+      console.log("Options saved. PAT and interval updated.");
+      // Notify background script of changes so it can reschedule alarms etc.
+      chrome.runtime.sendMessage({ type: "optionsChanged" }, (response) => {
+        if (chrome.runtime.lastError) {
+          console.warn(
+            "Error sending optionsChanged message:",
+            chrome.runtime.lastError.message
+          );
+        } else {
+          console.log(
+            "Background script notified of options change:",
+            response
+          );
+        }
+      });
+      // Optionally, you might want to re-fetch PRs or user info in the popup itself
+      // or simply close the panel and let the main view refresh on next auto-check.
+      // For simplicity, just show success message for now.
+      setTimeout(() => {
+        if (statusDiv) statusDiv.textContent = "";
+        // toggleOptionsPanel(); // Optionally close panel on save
+      }, 2000);
+    });
+  }
+
+  // Original openOptions function - now repurposed for the settings icon
   function openOptions() {
-    chrome.runtime.openOptionsPage();
+    // chrome.runtime.openOptionsPage(); // Old behavior
+    toggleOptionsPanel(); // New behavior
   }
 
   if (openOptionsPageButton) {
-    openOptionsPageButton.addEventListener("click", openOptions);
+    // This is the button in the initial summary view
+    openOptionsPageButton.addEventListener("click", toggleOptionsPanel); // Also make this toggle the panel
   }
   if (optionsButton) {
+    // This is the settings icon
     optionsButton.addEventListener("click", openOptions);
+  }
+  if (backOptionsPanelButton) {
+    // New back button listener
+    backOptionsPanelButton.addEventListener("click", toggleOptionsPanel);
+  }
+  if (saveButton) {
+    saveButton.addEventListener("click", saveOptionsFromPanel);
   }
 
   async function displayPRs() {
