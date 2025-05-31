@@ -139,7 +139,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       if (prSummaryDiv) prSummaryDiv.style.display = "block";
       if (prListContainer) prListContainer.style.display = "none";
-      if (prCountSpan) prCountSpan.textContent = "(0)";
+      if (prCountSpan) prCountSpan.textContent = "0";
       return;
     }
 
@@ -164,14 +164,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
       if (prListContainer) prListContainer.style.display = "block";
       if (prListUl) prListUl.innerHTML = "<li>Loading PRs...</li>";
-      if (prCountSpan) prCountSpan.textContent = "(...)";
+      if (prCountSpan) prCountSpan.textContent = "...";
 
       const assignedPRs = await fetchAssignedPRs(user.login); // from auth.js
 
       if (assignedPRs && assignedPRs.length > 0) {
         prListUl.innerHTML = ""; // Clear "Loading..."
         noPRsMessage.style.display = "none";
-        prCountSpan.textContent = `(${assignedPRs.length})`; // Update count
+        prCountSpan.textContent = assignedPRs.length; // Update count
         assignedPRs.forEach((pr) => {
           const listItem = document.createElement("li");
           const prLink = document.createElement("a");
@@ -186,12 +186,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Empty array means no PRs, not an error
         prListUl.innerHTML = "";
         noPRsMessage.style.display = "block";
-        prCountSpan.textContent = "(0)"; // Update count to 0
+        prCountSpan.textContent = "0"; // Update count to 0
       } else {
         // Null or undefined means an error occurred during fetch
         prListUl.innerHTML = "<li>Could not load PRs. Check console.</li>";
         noPRsMessage.style.display = "none";
-        prCountSpan.textContent = "(Error)"; // Indicate error in count
+        prCountSpan.textContent = "Error"; // Indicate error in count
       }
     } else {
       if (userStatusMessageP) {
@@ -201,7 +201,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (userAvatarLink) userAvatarLink.style.display = "none";
       if (prListContainer) prListContainer.style.display = "none";
       if (prSummaryDiv) prSummaryDiv.style.display = "block";
-      if (prCountSpan) prCountSpan.textContent = "(0)";
+      if (prCountSpan) prCountSpan.textContent = "0";
     }
   }
 
