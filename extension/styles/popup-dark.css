@@ -1,0 +1,146 @@
+body {
+  background-color: #0d1117;
+  color: #c9d1d9;
+}
+
+h1 {
+  color: #c9d1d9;
+}
+
+#user-status p,
+#pr-summary p {
+  color: #c9d1d9;
+}
+
+button {
+  background-color: #238636;
+  color: #ffffff;
+  border: 1px solid rgba(240, 246, 252, 0.1);
+}
+
+button:hover {
+  background-color: #2ea043;
+}
+
+hr {
+  border-top-color: #30363d;
+}
+
+#pr-list-container h3 {
+  color: #c9d1d9;
+}
+
+#pr-list li {
+  background-color: #161b22;
+  border-color: #30363d;
+}
+
+#pr-list li a {
+  color: #58a6ff;
+}
+
+#pr-list li span {
+  color: #8b949e;
+}
+
+#no-prs-message {
+  color: #8b949e;
+}
+
+#settings-icon-button svg {
+  color: #c9d1d9;
+  display: block;
+}
+
+#settings-icon-button:hover {
+  background-color: #21262d;
+}
+
+/* Slide-in Options Panel Styles - Dark Theme */
+#options-panel {
+  background-color: #0d1117; /* Dark background for panel */
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.3); /* Darker shadow */
+}
+
+.options-panel-header {
+  background-color: #161b22; /* Slightly lighter dark for header */
+}
+
+.options-panel-header h2 {
+  color: #c9d1d9;
+}
+
+/* New styles for back button - Dark Theme */
+.panel-header-button {
+  /* color: #8b949e; */ /* Color will be inherited or set on SVG */
+  /* These properties should match the light theme's .panel-header-button for structure */
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  line-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.panel-header-button:hover {
+  /* color: #c9d1d9; */
+  background-color: #21262d; /* Match settings icon button hover */
+}
+
+.panel-header-button svg {
+  /* These properties should match the light theme's .panel-header-button svg for structure */
+  width: 20px;
+  height: 20px;
+  display: block;
+  color: #c9d1d9; /* Match settings icon svg color */
+}
+
+#close-options-panel {
+  /* Old close button, styles can be removed or repurposed */
+  color: #8b949e;
+}
+#close-options-panel:hover {
+  color: #c9d1d9;
+}
+
+.options-panel-content label {
+  color: #c9d1d9;
+}
+
+.options-panel-content input[type="password"],
+.options-panel-content input[type="number"] {
+  background-color: #010409;
+  color: #c9d1d9;
+  border-color: #30363d;
+}
+
+.options-panel-content input[type="password"]:focus,
+.options-panel-content input[type="number"]:focus {
+  border-color: #58a6ff;
+  box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.3);
+}
+
+.options-panel-content .info {
+  color: #8b949e;
+}
+
+#popup-save-options {
+  background-color: #238636;
+  color: #ffffff;
+  border-color: rgba(240, 246, 252, 0.1);
+}
+
+#popup-save-options:hover {
+  background-color: #2ea043;
+}
+
+#popup-status {
+  color: #3fb950; /* GitHub dark theme success green */
+}
+
+#popup-status.error {
+  color: #f85149; /* GitHub dark theme error red */
+}

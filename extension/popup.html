@@ -3,21 +3,67 @@
   <head>
     <title>PullRadar Popup</title>
     <meta charset="utf-8" />
-    <link rel="stylesheet" href="popup.css" />
+    <link rel="stylesheet" href="styles/popup.css" />
+    <link
+      rel="stylesheet"
+      href="styles/popup-dark.css"
+      media="(prefers-color-scheme: dark)"
+    />
   </head>
   <body>
-    <h1>PullRadar</h1>
-    <div id="user-status">
-      <p id="user-info">Loading user information...</p>
-      <button id="options-button" style="display: none">Configure Token</button>
+    <div id="header-container">
+      <h1>PullRadar</h1>
+      <div id="user-status-area" style="display: flex; align-items: center">
+        <p
+          id="user-status-message"
+          style="margin: 0 8px 0 0; display: none; color: #586069"
+        ></p>
+        <a
+          id="user-avatar-link"
+          href="#"
+          target="_blank"
+          style="display: none; line-height: 0"
+        >
+          <img
+            id="user-avatar"
+            src=""
+            alt="User Avatar"
+            style="width: 32px; height: 32px; border-radius: 50%"
+          />
+        </a>
+        <a
+          href="#"
+          id="settings-icon-button"
+          title="Open Settings"
+          style="
+            margin-left: 8px;
+            padding: 4px;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            line-height: 0;
+          "
+        >
+          <svg
+            viewBox="0 0 24 24"
+            width="20"
+            height="20"
+            fill="currentColor"
+            aria-hidden="true"
+            style="display: block"
+          >
+            <use href="assets/icons.svg#icon-settings"></use>
+          </svg>
+        </a>
+      </div>
     </div>
-    <hr />
     <div id="pr-summary">
       <p>Open the options to set your GitHub Token and preferences.</p>
       <p><button id="open-options-page">Open Options</button></p>
     </div>
     <div id="pr-list-container" style="display: none">
-      <h3>Assigned Pull Requests:</h3>
+      <h3>Assigned Pull Requests: <span id="pr-count">(0)</span></h3>
       <ul id="pr-list">
         <!-- PRs will be listed here -->
       </ul>
@@ -28,5 +74,51 @@
     <script src="browser-polyfill.min.js"></script>
     <script src="auth.js"></script>
     <script src="popup.js"></script>
+
+    <div id="options-panel" class="options-panel-hidden">
+      <div class="options-panel-header">
+        <button
+          id="back-options-panel"
+          title="Back to Popup"
+          class="panel-header-button"
+        >
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+            <use href="assets/icons.svg#icon-back-arrow"></use>
+          </svg>
+        </button>
+        <h2>PullRadar Options</h2>
+        <span class="panel-header-spacer"></span>
+      </div>
+      <div class="options-panel-content">
+        <div class="form-group">
+          <label for="popup-github-pat">GitHub Personal Access Token:</label>
+          <input
+            type="password"
+            id="popup-github-pat"
+            name="popup-github-pat"
+            size="35"
+          />
+          <p class="info">
+            Required for accessing GitHub API. Ensure it has 'repo' and
+            'notifications' scopes.
+          </p>
+        </div>
+        <div class="form-group">
+          <label for="popup-polling-interval"
+            >Polling Interval (seconds):</label
+          >
+          <input
+            type="number"
+            id="popup-polling-interval"
+            name="popup-polling-interval"
+            min="10"
+            value="60"
+          />
+          <p class="info">Minimum 10 seconds. Default is 60 seconds.</p>
+        </div>
+        <button id="popup-save-options">Save Options</button>
+        <div id="popup-status" class="status-message"></div>
+      </div>
+    </div>
   </body>
 </html>

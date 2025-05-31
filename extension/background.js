@@ -3,6 +3,13 @@
 
 const PR_CHECK_ALARM_NAME = "prCheckAlarm";
 const BOOKMARK_FOLDER_TITLE = "Pull Requests";
+
+// Browser type enum
+const BrowserType = {
+  CHROME: "chrome",
+  FIREFOX: "firefox",
+  UNKNOWN: "unknown",
+};
 let pollingIntervalMinutes = 1; // Default to 1 minute, will be updated from storage
 
 async function getPollingInterval() {
@@ -60,15 +67,97 @@ async function getOrCreateBookmarkFolderId() {
   return new Promise((resolve) => {
     chrome.bookmarks.search({ title: BOOKMARK_FOLDER_TITLE }, (results) => {
       if (results.length > 0) {
+        console.log(
+          `Found existing bookmark folder "${BOOKMARK_FOLDER_TITLE}" with ID: ${results[0].id}`
+        );
         resolve(results[0].id);
       } else {
-        chrome.bookmarks.create({ title: BOOKMARK_FOLDER_TITLE }, (folder) => {
-          console.log("Created bookmark folder:", BOOKMARK_FOLDER_TITLE);
-          resolve(folder.id);
-        });
+        let preferredParentId = null;
+
+        const browserType = determineBrowser();
+
+        if (browserType === BrowserType.CHROME) {
+          // Chrome or Chromium-based (e.g., Edge, Opera, Zen)
+          preferredParentId = "1"; // Standard ID for the Bookmarks Bar in Chrome/Chromium
+          console.log(
+            "Detected Chromium-based browser. Preferred parent ID for bookmarks: '1'"
+          );
+        } else if (browserType === BrowserType.FIREFOX) {
+          // Firefox
+          preferredParentId = "toolbar_____"; // Standard ID for the Bookmarks Toolbar in Firefox
+          console.log(
+            "Detected Firefox browser. Preferred parent ID for bookmarks: 'toolbar_____'"
+          );
+        } else {
+          console.log(
+            "Could not determine specific toolbar ID for this browser. Folder will be created in default location if preferred method fails."
+          );
+        }
+
+        const createFolderAttempt = (parentIdToTry) => {
+          const bookmarkDetails = { title: BOOKMARK_FOLDER_TITLE };
+          if (parentIdToTry) {
+            bookmarkDetails.parentId = parentIdToTry;
+          }
+
+          chrome.bookmarks.create(bookmarkDetails, (folder) => {
+            if (chrome.runtime.lastError) {
+              console.warn(
+                `Error creating bookmark folder "${BOOKMARK_FOLDER_TITLE}" with parentId "${parentIdToTry}": ${chrome.runtime.lastError.message}.`
+              );
+              // If a preferred parentId was tried and failed, and it wasn't null (meaning it was the first attempt with a specific toolbar ID),
+              // then fallback to creating in the default location.
+              if (parentIdToTry !== null) {
+                console.log(
+                  `Falling back to creating folder "${BOOKMARK_FOLDER_TITLE}" in default location.`
+                );
+                createFolderAttempt(null); // Recursive call for fallback to default location
+              } else {
+                // This means even creating in the default location (parentIdToTry was null) failed.
+                console.error(
+                  `Failed to create bookmark folder "${BOOKMARK_FOLDER_TITLE}" even in default location.`
+                );
+                resolve(null); // Indicate failure to create the folder
+              }
+            } else {
+              console.log(
+                `Successfully created bookmark folder "${BOOKMARK_FOLDER_TITLE}" (ID: ${
+                  folder.id
+                })${
+                  parentIdToTry
+                    ? ` under parent ID "${parentIdToTry}" (attempted toolbar placement)`
+                    : " in default location"
+                }.`
+              );
+              resolve(folder.id);
+            }
+          });
+        };
+
+        console.log(
+          `Attempting to create bookmark folder "${BOOKMARK_FOLDER_TITLE}". Preferred parent ID for toolbar: ${
+            preferredParentId || "none (will use default location)"
+          }`
+        );
+        createFolderAttempt(preferredParentId);
       }
     });
   });
+}
+
+function determineBrowser() {
+  /// Heuristic to determine browser type for specific parent IDs
+  /// chrome.runtime.getURL("") returns something like:
+  /// chrome-extension://<extension-id>/
+  /// moz-extension://<extension-uuid>/
+  const currentUrlScheme = chrome.runtime.getURL("").split(":")[0];
+  if (currentUrlScheme === "chrome-extension") {
+    return BrowserType.CHROME;
+  } else if (currentUrlScheme === "moz-extension") {
+    return BrowserType.FIREFOX;
+  } else {
+    return BrowserType.UNKNOWN;
+  }
 }
 
 async function addPRBookmark(pr, folderId) {
@@ -143,6 +232,8 @@ async function checkPRs() {
       message:
         "Please configure your GitHub Personal Access Token in the extension options.",
     });
+    chrome.action.setBadgeText({ text: "!" }); // Set badge to ! if PAT is missing
+    chrome.action.setBadgeBackgroundColor({ color: "#D73A49" }); // Red color for error
     chrome.alarms.clear(PR_CHECK_ALARM_NAME); // Stop alarm until PAT is set
     console.log("Cleared PR Check alarm due to missing PAT.");
     return;
@@ -172,6 +263,7 @@ async function checkPRs() {
 
   const bookmarkFolderId = await getOrCreateBookmarkFolderId();
 
+  let assignedPRCount = 0;
   for (const pr of assignedPRs) {
     if (
       pr &&
@@ -179,7 +271,7 @@ async function checkPRs() {
       pr.assignee &&
       pr.assignee.login === currentUserLogin
     ) {
-      // Double check assignment
+      assignedPRCount++; // Increment count
       currentPRUrls.add(pr.html_url);
       if (!knownPRUrls.includes(pr.html_url)) {
         newPRs.push(pr);
@@ -197,6 +289,12 @@ async function checkPRs() {
   } else {
     console.log("No new PRs assigned since last check.");
   }
+
+  // Update badge text with the total number of assigned PRs
+  chrome.action.setBadgeText({
+    text: assignedPRCount > 0 ? String(assignedPRCount) : "",
+  });
+  chrome.action.setBadgeBackgroundColor({ color: "#0366D6" }); // GitHub blue-ish color
 
   // FR6.3: When a PR is closed or unassigned from the user, the corresponding bookmark is silently removed.
   // This means we need to find which of the `knownPRUrls` are NOT in `currentPRUrls`

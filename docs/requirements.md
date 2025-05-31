@@ -43,7 +43,7 @@ The GitHub Pull Request Notifier is a browser extension that notifies users in r
 
 ### 2.6. Bookmarks Integration
 
-- **FR6.1**: The extension shall create a special bookmarks folder in the browser to save URLs of pull requests.
+- **FR6.1**: The extension shall create a special bookmarks folder in the browser to save URLs of pull requests. For enhanced accessibility, this folder should be programmatically placed on the browser's bookmarks toolbar if such functionality is supported by the browser's extension API.
 - **FR6.2**: When a notification is received for a PR assignment, the PR URL is automatically added as a bookmark in this folder.
 - **FR6.3**: When a PR is closed or unassigned from the user, the corresponding bookmark is silently removed from the folder.
 
@@ -52,6 +52,14 @@ The GitHub Pull Request Notifier is a browser extension that notifies users in r
 - **FR7.1**: The extension must allow users to configure the polling interval for checking the GitHub API.
 - **FR7.2**: The extension must handle GitHub API rate limits gracefully and provide clear error messages if the limit is reached.
 - **FR7.3**: Documentation must be provided to guide users on how to generate and use a GitHub personal access token (if required) and how to configure the extension.
+
+### 2.8. User Interface
+
+- **FR8.1**: The extension must have a popup that displays the user's GitHub username and avatar.
+- **FR8.2**: The popup must have a button to open the options page.
+- **FR8.3**: The popup must have a list of pull requests assigned to the user.
+- **FR8.4**: The number of pull requests assigned to the user must be displayed in the popup.
+- **FR8.5**: The number of pull requests assigned to the user must be shown next to the extension icon in the browser toolbar.
 
 ---
 

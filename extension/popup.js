@@ -2,23 +2,125 @@
 document.addEventListener("DOMContentLoaded", async () => {
   console.log("PullRadar popup loaded.");
 
-  const userInfoP = document.getElementById("user-info");
-  const optionsButton = document.getElementById("options-button"); // For re-configuring token
+  // const userInfoP = document.getElementById("user-info"); // No longer used directly for detailed user name/login
+  // const userLoginP = document.getElementById("user-login"); // Removed
+  // const userNameP = document.getElementById("user-name");   // Removed
+  const userStatusMessageP = document.getElementById("user-status-message");
+  const optionsButton = document.getElementById("settings-icon-button"); // Changed ID
   const openOptionsPageButton = document.getElementById("open-options-page");
+  const userAvatarImg = document.getElementById("user-avatar"); // Added for avatar
+  const userAvatarLink = document.getElementById("user-avatar-link"); // Added for avatar link
   const prListUl = document.getElementById("pr-list");
   const prListContainer = document.getElementById("pr-list-container");
   const noPRsMessage = document.getElementById("no-prs-message");
   const prSummaryDiv = document.getElementById("pr-summary");
+  const prCountSpan = document.getElementById("pr-count"); // Added for PR count
 
+  // Options Panel Elements
+  const optionsPanel = document.getElementById("options-panel");
+  const backOptionsPanelButton = document.getElementById("back-options-panel"); // New back button
+  const patInput = document.getElementById("popup-github-pat");
+  const intervalInput = document.getElementById("popup-polling-interval");
+  const saveButton = document.getElementById("popup-save-options");
+  const statusDiv = document.getElementById("popup-status");
+
+  // Function to open/close options panel
+  function toggleOptionsPanel() {
+    if (optionsPanel) {
+      optionsPanel.classList.toggle("options-panel-visible");
+      if (optionsPanel.classList.contains("options-panel-visible")) {
+        loadOptionsIntoPanel(); // Load current settings when panel opens
+      }
+    }
+  }
+
+  // Load options into the panel
+  async function loadOptionsIntoPanel() {
+    const currentPat = await getGitHubPAT(); // from auth.js
+    if (patInput && currentPat) {
+      patInput.value = currentPat;
+    }
+    chrome.storage.sync.get({ pollingInterval: 60 }, (data) => {
+      if (intervalInput) {
+        intervalInput.value = data.pollingInterval;
+      }
+    });
+    if (statusDiv) statusDiv.textContent = ""; // Clear status on load
+  }
+
+  // Save options from the panel
+  async function saveOptionsFromPanel() {
+    const pat = patInput.value.trim();
+    const interval = parseInt(intervalInput.value, 10);
+
+    if (!pat) {
+      if (statusDiv) {
+        statusDiv.textContent = "Error: GitHub PAT cannot be empty.";
+        statusDiv.className = "status-message error";
+      }
+      return;
+    }
+
+    if (isNaN(interval) || interval < 10) {
+      if (statusDiv) {
+        statusDiv.textContent =
+          "Error: Polling interval must be at least 10 seconds.";
+        statusDiv.className = "status-message error";
+      }
+      return;
+    }
+
+    await setGitHubPAT(pat); // from auth.js
+    chrome.storage.sync.set({ pollingInterval: interval }, () => {
+      if (statusDiv) {
+        statusDiv.textContent = "Options saved successfully!";
+        statusDiv.className = "status-message"; // Reset to default color
+      }
+      console.log("Options saved. PAT and interval updated.");
+      // Notify background script of changes so it can reschedule alarms etc.
+      chrome.runtime.sendMessage({ type: "optionsChanged" }, (response) => {
+        if (chrome.runtime.lastError) {
+          console.warn(
+            "Error sending optionsChanged message:",
+            chrome.runtime.lastError.message
+          );
+        } else {
+          console.log(
+            "Background script notified of options change:",
+            response
+          );
+        }
+      });
+      // Optionally, you might want to re-fetch PRs or user info in the popup itself
+      // or simply close the panel and let the main view refresh on next auto-check.
+      // For simplicity, just show success message for now.
+      setTimeout(() => {
+        if (statusDiv) statusDiv.textContent = "";
+        // toggleOptionsPanel(); // Optionally close panel on save
+      }, 2000);
+    });
+  }
+
+  // Original openOptions function - now repurposed for the settings icon
   function openOptions() {
-    chrome.runtime.openOptionsPage();
+    // chrome.runtime.openOptionsPage(); // Old behavior
+    toggleOptionsPanel(); // New behavior
   }
 
   if (openOptionsPageButton) {
-    openOptionsPageButton.addEventListener("click", openOptions);
+    // This is the button in the initial summary view
+    openOptionsPageButton.addEventListener("click", toggleOptionsPanel); // Also make this toggle the panel
   }
   if (optionsButton) {
+    // This is the settings icon
     optionsButton.addEventListener("click", openOptions);
+  }
+  if (backOptionsPanelButton) {
+    // New back button listener
+    backOptionsPanelButton.addEventListener("click", toggleOptionsPanel);
+  }
+  if (saveButton) {
+    saveButton.addEventListener("click", saveOptionsFromPanel);
   }
 
   async function displayPRs() {
@@ -29,32 +131,47 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const pat = await getGitHubPAT(); // from auth.js, included in popup.html
     if (!pat) {
-      userInfoP.textContent = "GitHub PAT not set.";
-      optionsButton.style.display = "inline-block";
-      optionsButton.textContent = "Set PAT in Options";
-      prSummaryDiv.style.display = "block";
-      prListContainer.style.display = "none";
+      if (userStatusMessageP) {
+        userStatusMessageP.textContent = "GitHub PAT not set.";
+        userStatusMessageP.style.display = "inline";
+      }
+      if (userAvatarLink) userAvatarLink.style.display = "none";
+
+      if (prSummaryDiv) prSummaryDiv.style.display = "block";
+      if (prListContainer) prListContainer.style.display = "none";
+      if (prCountSpan) prCountSpan.textContent = "(0)";
       return;
     }
 
-    optionsButton.style.display = "none"; // Hide if PAT is present initially
-    prSummaryDiv.style.display = "none"; // Hide initial summary
+    if (prSummaryDiv) prSummaryDiv.style.display = "none";
 
-    // Try to get user info using the PAT (also validates PAT roughly)
-    // `fetchUserDetails` is in auth.js, which should be loaded before popup.js
-    userInfoP.textContent = "Fetching user info...";
-    const user = await fetchUserDetails(); // from auth.js
+    if (userStatusMessageP) {
+      userStatusMessageP.textContent = "Fetching user info...";
+      userStatusMessageP.style.display = "inline";
+    }
+    const user = await fetchUserDetails();
 
     if (user && user.login) {
-      userInfoP.textContent = `User: ${user.login}`;
-      prListContainer.style.display = "block";
-      prListUl.innerHTML = "<li>Loading PRs...</li>"; // Clear previous list
+      // We still need user.login for fetching PRs
+      if (userStatusMessageP) userStatusMessageP.style.display = "none"; // Hide status message if successful
+
+      if (user.avatar_url && user.html_url && userAvatarImg && userAvatarLink) {
+        userAvatarImg.src = user.avatar_url;
+        userAvatarLink.href = user.html_url;
+        userAvatarLink.style.display = "inline-block";
+      } else {
+        if (userAvatarLink) userAvatarLink.style.display = "none";
+      }
+      if (prListContainer) prListContainer.style.display = "block";
+      if (prListUl) prListUl.innerHTML = "<li>Loading PRs...</li>";
+      if (prCountSpan) prCountSpan.textContent = "(...)";
 
       const assignedPRs = await fetchAssignedPRs(user.login); // from auth.js
 
       if (assignedPRs && assignedPRs.length > 0) {
         prListUl.innerHTML = ""; // Clear "Loading..."
         noPRsMessage.style.display = "none";
+        prCountSpan.textContent = `(${assignedPRs.length})`; // Update count
         assignedPRs.forEach((pr) => {
           const listItem = document.createElement("li");
           const prLink = document.createElement("a");
@@ -69,18 +186,22 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Empty array means no PRs, not an error
         prListUl.innerHTML = "";
         noPRsMessage.style.display = "block";
+        prCountSpan.textContent = "(0)"; // Update count to 0
       } else {
         // Null or undefined means an error occurred during fetch
         prListUl.innerHTML = "<li>Could not load PRs. Check console.</li>";
         noPRsMessage.style.display = "none";
+        prCountSpan.textContent = "(Error)"; // Indicate error in count
       }
     } else {
-      userInfoP.textContent =
-        "Invalid PAT or could not fetch user. Please check options.";
-      optionsButton.style.display = "inline-block";
-      optionsButton.textContent = "Check PAT in Options";
-      prListContainer.style.display = "none";
-      prSummaryDiv.style.display = "block"; // Show summary again
+      if (userStatusMessageP) {
+        userStatusMessageP.textContent = "Invalid PAT or error fetching user.";
+        userStatusMessageP.style.display = "inline";
+      }
+      if (userAvatarLink) userAvatarLink.style.display = "none";
+      if (prListContainer) prListContainer.style.display = "none";
+      if (prSummaryDiv) prSummaryDiv.style.display = "block";
+      if (prCountSpan) prCountSpan.textContent = "(0)";
     }
   }
 
