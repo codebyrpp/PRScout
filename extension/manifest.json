@@ -1,0 +1,36 @@
+{
+  "manifest_version": 3,
+  "name": "PullRadar",
+  "version": "1.0",
+  "description": "Notifies you when a pull request is assigned to you.",
+  "permissions": [
+    "notifications",
+    "storage",
+    "identity",
+    "bookmarks",
+    "alarms"
+  ],
+  "host_permissions": ["*://api.github.com/*"],
+  "background": {
+    "scripts": ["browser-polyfill.js", "auth.js", "background.js"]
+  },
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "pullradar@pavanpitiwaduge.com",
+      "strict_min_version": "109.0"
+    }
+  }
+}
