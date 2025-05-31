@@ -43,6 +43,11 @@ hr {
   color: #8b949e;
 }
 
+#pr-count {
+  background-color: #30363d;
+  color: #c9d1d9;
+}
+
 #no-prs-message {
   color: #8b949e;
 }

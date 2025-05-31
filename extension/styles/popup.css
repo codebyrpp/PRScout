@@ -84,7 +84,21 @@ hr {
 #pr-list li {
   padding: 8px 10px;
   border-bottom: 1px solid #e1e4e8;
-  font-size: 13px;
+  display: flex; /* Align avatar and text */
+  align-items: center; /* Vertically align items */
+  font-size: 13px; /* Restore base font size for list items */
+}
+
+.pr-author-avatar-link {
+  margin-right: 8px; /* Space between avatar and PR title */
+  line-height: 0; /* Remove extra space if avatar is inline-block */
+}
+
+.pr-author-avatar {
+  width: 24px; /* Adjust size as needed */
+  height: 24px;
+  border-radius: 50%; /* Circular avatars */
+  vertical-align: middle; /* Good for inline or flex alignment */
 }
 
 #pr-list li:last-child {
@@ -99,6 +113,23 @@ hr {
 
 #pr-list a:hover {
   text-decoration: underline;
+}
+
+#pr-count {
+  font-weight: 600;
+  color: #586069;
+  font-size: 14px;
+  background-color: #e1e4e8;
+  padding: 2px 4px;
+  margin-top: 1px;
+  margin-bottom: 1px;
+  border-radius: 6px;
+  margin-left: 8px;
+  line-height: 1;
+  min-width: 20px;
+  text-align: center;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 #no-prs-message,
@@ -265,4 +296,16 @@ hr {
 }
 #popup-status.error {
   color: #cb2431; /* Error color */
+}
+
+#header-title {
+  display: flex;
+  align-items: center;
+}
+
+#header-icon {
+  width: 24px; /* Adjust size as needed */
+  height: 24px; /* Adjust size as needed */
+  vertical-align: middle; /* Align with the text */
+  margin-right: 8px; /* Space between icon and text */
 }
