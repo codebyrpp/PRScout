@@ -10,12 +10,9 @@ body {
 }
 
 h1 {
-  font-size: 18px;
+  font-size: 24px;
   font-weight: 600;
   color: #24292e;
-  margin-top: 0;
-  margin-bottom: 10px;
-  padding-bottom: 0.3em;
 }
 
 #user-status p,
