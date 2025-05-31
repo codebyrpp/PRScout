@@ -4,10 +4,18 @@ body {
   background-color: #fff; /* Popup usually has a white background */
   color: #24292e;
   width: 350px;
-  height: 500px;
+  height: 500px; /* Ensure body has a defined height */
   padding-inline: 15px;
   font-size: 14px;
   line-height: 1.5;
+  display: flex; /* Use flexbox */
+  flex-direction: column; /* Stack children vertically */
+  margin: 0; /* Remove default body margin */
+}
+
+#content-wrap {
+  flex: 1 0 auto; /* Allow content to grow and shrink, but don't shrink below content size */
+  /* padding-bottom: 15px; */ /* Optional: if you want some space before the footer line */
 }
 
 h1 {
@@ -308,4 +316,24 @@ hr {
   height: 24px; /* Adjust size as needed */
   vertical-align: middle; /* Align with the text */
   margin-right: 8px; /* Space between icon and text */
+}
+
+footer {
+  text-align: center;
+  padding: 10px 15px; /* Added horizontal padding to match body */
+  font-size: 12px;
+  color: #586069; /* Subtler text color */
+  border-top: 1px solid #e1e4e8; /* Optional separator line */
+  /* margin-top: 15px; */ /* No longer needed, flexbox handles spacing */
+  flex-shrink: 0; /* Prevent footer from shrinking */
+}
+
+footer p {
+  margin: 0;
+}
+
+footer a,
+footer p a,
+footer p a:visited {
+  color: #24292e;
 }

@@ -149,3 +149,15 @@ hr {
 #popup-status.error {
   color: #f85149; /* GitHub dark theme error red */
 }
+
+footer {
+  color: #8b949e; /* Subtler text color for dark theme */
+  border-top-color: #30363d; /* Darker separator line */
+}
+
+footer a,
+footer p a,
+footer p a:visited {
+  color: #8b949e;
+  font-weight: 600;
+}

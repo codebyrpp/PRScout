@@ -11,73 +11,81 @@
     />
   </head>
   <body>
-    <div id="header-container">
-      <h1 id="header-title">
-        <img src="./icons/icon48.png" alt="PullRadar icon" id="header-icon" />
-        <strong>P</strong>ull<strong>R</strong>adar
-      </h1>
-      <div id="user-status-area" style="display: flex; align-items: center">
-        <p
-          id="user-status-message"
-          style="margin: 0 8px 0 0; display: none; color: #586069"
-        ></p>
-        <a
-          id="user-avatar-link"
-          href="#"
-          target="_blank"
-          style="display: none; line-height: 0"
-        >
-          <img
-            id="user-avatar"
-            src=""
-            alt="User Avatar"
-            style="width: 32px; height: 32px; border-radius: 50%"
-          />
-        </a>
-        <a
-          href="#"
-          id="settings-icon-button"
-          title="Open Settings"
-          style="
-            margin-left: 8px;
-            padding: 4px;
-            border-radius: 6px;
-            cursor: pointer;
-            width: 20px;
-            height: 20px;
-            line-height: 0;
-          "
-        >
-          <svg
-            viewBox="0 0 24 24"
-            width="20"
-            height="20"
-            fill="currentColor"
-            aria-hidden="true"
-            style="display: block"
+    <div id="content-wrap">
+      <div id="header-container">
+        <h1 id="header-title">
+          <img src="./icons/icon48.png" alt="PullRadar icon" id="header-icon" />
+          <strong>P</strong>ull<strong>R</strong>adar
+        </h1>
+        <div id="user-status-area" style="display: flex; align-items: center">
+          <p
+            id="user-status-message"
+            style="margin: 0 8px 0 0; display: none; color: #586069"
+          ></p>
+          <a
+            id="user-avatar-link"
+            href="#"
+            target="_blank"
+            style="display: none; line-height: 0"
           >
-            <use href="assets/icons.svg#icon-settings"></use>
-          </svg>
-        </a>
+            <img
+              id="user-avatar"
+              src=""
+              alt="User Avatar"
+              style="width: 32px; height: 32px; border-radius: 50%"
+            />
+          </a>
+          <a
+            href="#"
+            id="settings-icon-button"
+            title="Open Settings"
+            style="
+              margin-left: 8px;
+              padding: 4px;
+              border-radius: 6px;
+              cursor: pointer;
+              width: 20px;
+              height: 20px;
+              line-height: 0;
+            "
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width="20"
+              height="20"
+              fill="currentColor"
+              aria-hidden="true"
+              style="display: block"
+            >
+              <use href="assets/icons.svg#icon-settings"></use>
+            </svg>
+          </a>
+        </div>
+      </div>
+      <div id="pr-summary">
+        <p>Open the options to set your GitHub Token and preferences.</p>
+        <p><button id="open-options-page">Open Options</button></p>
+      </div>
+      <div id="pr-list-container" style="display: none">
+        <h3>Assigned PRs: <span id="pr-count">0</span></h3>
+        <ul id="pr-list">
+          <!-- PRs will be listed here -->
+        </ul>
+        <p id="no-prs-message" style="display: none">
+          No pull requests assigned to you currently.
+        </p>
       </div>
     </div>
-    <div id="pr-summary">
-      <p>Open the options to set your GitHub Token and preferences.</p>
-      <p><button id="open-options-page">Open Options</button></p>
-    </div>
-    <div id="pr-list-container" style="display: none">
-      <h3>Assigned PRs: <span id="pr-count">0</span></h3>
-      <ul id="pr-list">
-        <!-- PRs will be listed here -->
-      </ul>
-      <p id="no-prs-message" style="display: none">
-        No pull requests assigned to you currently.
+    <footer>
+      <p>
+        Built by
+        <a href="https://www.pavanpitiwaduge.com" target="_blank">RPP</a>
+        👨‍💻
       </p>
-    </div>
+    </footer>
     <script src="browser-polyfill.min.js"></script>
     <script src="auth.js"></script>
     <script src="popup.js"></script>
-
     <div id="options-panel" class="options-panel-hidden">
       <div class="options-panel-header">
         <button
