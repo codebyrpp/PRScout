@@ -84,9 +84,9 @@ hr {
 #pr-list li {
   padding: 8px 10px;
   border-bottom: 1px solid #e1e4e8;
-  font-size: 13px;
   display: flex; /* Align avatar and text */
   align-items: center; /* Vertically align items */
+  font-size: 13px; /* Restore base font size for list items */
 }
 
 .pr-author-avatar-link {
