@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const optionsButton = document.getElementById("options-button"); // For re-configuring token
   const openOptionsPageButton = document.getElementById("open-options-page");
   const userAvatarImg = document.getElementById("user-avatar"); // Added for avatar
+  const userAvatarLink = document.getElementById("user-avatar-link"); // Added for avatar link
   const prListUl = document.getElementById("pr-list");
   const prListContainer = document.getElementById("pr-list-container");
   const noPRsMessage = document.getElementById("no-prs-message");
@@ -38,7 +39,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         userStatusMessageP.textContent = "GitHub PAT not set.";
         userStatusMessageP.style.display = "inline";
       }
-      if (userAvatarImg) userAvatarImg.style.display = "none";
+      if (userAvatarLink) userAvatarLink.style.display = "none";
 
       if (optionsButton) {
         optionsButton.style.display = "inline-block";
@@ -65,13 +66,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       // We still need user.login for fetching PRs
       if (userStatusMessageP) userStatusMessageP.style.display = "none"; // Hide status message if successful
 
-      if (userAvatarImg) {
-        if (user.avatar_url) {
-          userAvatarImg.src = user.avatar_url;
-          userAvatarImg.style.display = "inline-block";
-        } else {
-          userAvatarImg.style.display = "none";
-        }
+      if (user.avatar_url && user.html_url && userAvatarImg && userAvatarLink) {
+        userAvatarImg.src = user.avatar_url;
+        userAvatarLink.href = user.html_url;
+        userAvatarLink.style.display = "inline-block";
+      } else {
+        if (userAvatarLink) userAvatarLink.style.display = "none";
       }
       if (prListContainer) prListContainer.style.display = "block";
       if (prListUl) prListUl.innerHTML = "<li>Loading PRs...</li>";
@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         userStatusMessageP.textContent = "Invalid PAT or error fetching user.";
         userStatusMessageP.style.display = "inline";
       }
-      if (userAvatarImg) userAvatarImg.style.display = "none";
+      if (userAvatarLink) userAvatarLink.style.display = "none";
       if (optionsButton) {
         optionsButton.style.display = "inline-block";
         optionsButton.textContent = "Check PAT";
