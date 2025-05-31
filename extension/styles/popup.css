@@ -107,3 +107,9 @@ hr {
 #user-info {
   font-weight: bold;
 }
+
+#user-status {
+  display: flex;
+  align-items: center; /* Vertically align items in the middle */
+  margin-bottom: 10px;
+}

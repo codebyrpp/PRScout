@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const userInfoP = document.getElementById("user-info");
   const optionsButton = document.getElementById("options-button"); // For re-configuring token
   const openOptionsPageButton = document.getElementById("open-options-page");
+  const userAvatarImg = document.getElementById("user-avatar"); // Added for avatar
   const prListUl = document.getElementById("pr-list");
   const prListContainer = document.getElementById("pr-list-container");
   const noPRsMessage = document.getElementById("no-prs-message");
@@ -47,6 +48,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (user && user.login) {
       userInfoP.textContent = `User: ${user.login}`;
+      if (user.avatar_url) {
+        userAvatarImg.src = user.avatar_url;
+        userAvatarImg.style.display = "inline-block";
+      } else {
+        userAvatarImg.style.display = "none";
+      }
       prListContainer.style.display = "block";
       prListUl.innerHTML = "<li>Loading PRs...</li>"; // Clear previous list
 
@@ -79,6 +86,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         "Invalid PAT or could not fetch user. Please check options.";
       optionsButton.style.display = "inline-block";
       optionsButton.textContent = "Check PAT in Options";
+      userAvatarImg.style.display = "none"; // Hide avatar on error
       prListContainer.style.display = "none";
       prSummaryDiv.style.display = "block"; // Show summary again
     }
