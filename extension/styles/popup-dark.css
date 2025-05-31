@@ -161,3 +161,9 @@ footer p a:visited {
   color: #8b949e;
   font-weight: 600;
 }
+
+/* Spinner Styles - Dark Theme */
+.spinner {
+  border: 4px solid rgba(255, 255, 255, 0.1); /* Lighter border for dark theme */
+  border-left-color: #58a6ff; /* GitHub dark blue for spinner active part */
+}

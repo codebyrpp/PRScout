@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const noPRsMessage = document.getElementById("no-prs-message");
   const prSummaryDiv = document.getElementById("pr-summary");
   const prCountSpan = document.getElementById("pr-count"); // Added for PR count
+  const prListLoader = document.getElementById("pr-list-loader"); // Spinner container
 
   // Options Panel Elements
   const optionsPanel = document.getElementById("options-panel");
@@ -163,13 +164,18 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (userAvatarLink) userAvatarLink.style.display = "none";
       }
       if (prListContainer) prListContainer.style.display = "block";
-      if (prListUl) prListUl.innerHTML = "<li>Loading PRs...</li>";
+      if (prListLoader) prListLoader.style.display = "flex"; // Show spinner
+      if (prListUl) prListUl.innerHTML = ""; // Clear any previous list items
+      if (prListUl) prListUl.style.display = "none"; // Hide list while loading
+      if (noPRsMessage) noPRsMessage.style.display = "none"; // Hide no PRs message
       if (prCountSpan) prCountSpan.textContent = "...";
 
       const assignedPRs = await fetchAssignedPRs(user.login); // from auth.js
 
+      if (prListLoader) prListLoader.style.display = "none"; // Hide spinner
+      if (prListUl) prListUl.style.display = "block"; // Show list again
+
       if (assignedPRs && assignedPRs.length > 0) {
-        prListUl.innerHTML = ""; // Clear "Loading..."
         noPRsMessage.style.display = "none";
         prCountSpan.textContent = `${assignedPRs.length}`;
         assignedPRs.forEach((pr) => {
@@ -202,17 +208,19 @@ document.addEventListener("DOMContentLoaded", async () => {
           prListUl.appendChild(listItem);
         });
       } else if (assignedPRs) {
-        // Empty array means no PRs, not an error
         prListUl.innerHTML = "";
-        noPRsMessage.style.display = "block";
-        prCountSpan.textContent = "0"; // Update count to 0
+        if (noPRsMessage) noPRsMessage.style.display = "block";
+        prCountSpan.textContent = "0";
       } else {
-        // Null or undefined means an error occurred during fetch
-        prListUl.innerHTML = "<li>Could not load PRs. Check console.</li>";
-        noPRsMessage.style.display = "none";
-        prCountSpan.textContent = "Error"; // Indicate error in count
+        if (userStatusMessageP) {
+          userStatusMessageP.textContent = "Could not load PRs.";
+          userStatusMessageP.style.display = "inline";
+        }
+        if (noPRsMessage) noPRsMessage.style.display = "none";
+        prCountSpan.textContent = "Error";
       }
     } else {
+      if (prListLoader) prListLoader.style.display = "none"; // Ensure loader is hidden on user fetch error too
       if (userStatusMessageP) {
         userStatusMessageP.textContent = "Invalid PAT or error fetching user.";
         userStatusMessageP.style.display = "inline";
