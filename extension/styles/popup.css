@@ -4,6 +4,7 @@ body {
   background-color: #fff; /* Popup usually has a white background */
   color: #24292e;
   width: 350px;
+  height: 500px;
   padding: 15px;
   font-size: 14px;
   line-height: 1.5;
@@ -108,4 +109,13 @@ hr {
   display: flex;
   align-items: center; /* Vertically align items in the middle */
   margin-bottom: 10px;
+}
+
+#settings-icon-button svg {
+  display: block; /* Removes extra space below SVG if its parent is line-height sensitive */
+  color: #24292e;
+}
+
+#settings-icon-button:hover {
+  background-color: #f0f0f0; /* Light grey background on hover for light theme */
 }

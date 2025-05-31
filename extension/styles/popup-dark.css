@@ -46,3 +46,12 @@ hr {
 #no-prs-message {
   color: #8b949e;
 }
+
+#settings-icon-button svg {
+  color: #c9d1d9;
+  display: block;
+}
+
+#settings-icon-button:hover {
+  background-color: #21262d;
+}

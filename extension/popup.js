@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // const userLoginP = document.getElementById("user-login"); // Removed
   // const userNameP = document.getElementById("user-name");   // Removed
   const userStatusMessageP = document.getElementById("user-status-message");
-  const optionsButton = document.getElementById("options-button"); // For re-configuring token
+  const optionsButton = document.getElementById("settings-icon-button"); // Changed ID
   const openOptionsPageButton = document.getElementById("open-options-page");
   const userAvatarImg = document.getElementById("user-avatar"); // Added for avatar
   const userAvatarLink = document.getElementById("user-avatar-link"); // Added for avatar link
@@ -41,20 +41,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
       if (userAvatarLink) userAvatarLink.style.display = "none";
 
-      if (optionsButton) {
-        optionsButton.style.display = "inline-block";
-        optionsButton.textContent = "Set PAT in Options";
-      }
-      // if (userInfoP) userInfoP.style.display = "none"; // Old element, ensure it's hidden if it still exists by mistake
       if (prSummaryDiv) prSummaryDiv.style.display = "block";
       if (prListContainer) prListContainer.style.display = "none";
       if (prCountSpan) prCountSpan.textContent = "(0)";
       return;
     }
 
-    if (optionsButton) optionsButton.style.display = "none";
     if (prSummaryDiv) prSummaryDiv.style.display = "none";
-    // if (userInfoP) userInfoP.style.display = "none"; // Old element
 
     if (userStatusMessageP) {
       userStatusMessageP.textContent = "Fetching user info...";
@@ -110,10 +103,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         userStatusMessageP.style.display = "inline";
       }
       if (userAvatarLink) userAvatarLink.style.display = "none";
-      if (optionsButton) {
-        optionsButton.style.display = "inline-block";
-        optionsButton.textContent = "Check PAT";
-      }
       if (prListContainer) prListContainer.style.display = "none";
       if (prSummaryDiv) prSummaryDiv.style.display = "block";
       if (prCountSpan) prCountSpan.textContent = "(0)";
