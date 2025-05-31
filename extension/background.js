@@ -1,3 +1,13 @@
+// The try/catch is to avoid errors in Chrome.
+try {
+  importScripts("browser-polyfill.js");
+} catch (e) {
+  console.error(
+    "Failed to import browser-polyfill.js. If you are in Chrome, this is expected and can be ignored.",
+    e
+  );
+}
+
 importScripts("auth.js");
 
 // This is the background service worker for the extension.
