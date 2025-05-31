@@ -171,9 +171,28 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (assignedPRs && assignedPRs.length > 0) {
         prListUl.innerHTML = ""; // Clear "Loading..."
         noPRsMessage.style.display = "none";
-        prCountSpan.textContent = assignedPRs.length; // Update count
+        prCountSpan.textContent = `${assignedPRs.length}`;
         assignedPRs.forEach((pr) => {
           const listItem = document.createElement("li");
+
+          // Author Avatar
+          if (pr.user && pr.user.avatar_url && pr.user.html_url) {
+            const authorAvatarLink = document.createElement("a");
+            authorAvatarLink.href = pr.user.html_url;
+            authorAvatarLink.target = "_blank";
+            authorAvatarLink.title =
+              "View profile of " + (pr.user.login || "author");
+            authorAvatarLink.classList.add("pr-author-avatar-link");
+
+            const authorAvatarImg = document.createElement("img");
+            authorAvatarImg.src = pr.user.avatar_url;
+            authorAvatarImg.alt = (pr.user.login || "Author") + " avatar";
+            authorAvatarImg.classList.add("pr-author-avatar");
+
+            authorAvatarLink.appendChild(authorAvatarImg);
+            listItem.appendChild(authorAvatarLink);
+          }
+
           const prLink = document.createElement("a");
           prLink.href = pr.html_url;
           prLink.target = "_blank";

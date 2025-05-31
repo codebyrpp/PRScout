@@ -85,6 +85,20 @@ hr {
   padding: 8px 10px;
   border-bottom: 1px solid #e1e4e8;
   font-size: 13px;
+  display: flex; /* Align avatar and text */
+  align-items: center; /* Vertically align items */
+}
+
+.pr-author-avatar-link {
+  margin-right: 8px; /* Space between avatar and PR title */
+  line-height: 0; /* Remove extra space if avatar is inline-block */
+}
+
+.pr-author-avatar {
+  width: 24px; /* Adjust size as needed */
+  height: 24px;
+  border-radius: 50%; /* Circular avatars */
+  vertical-align: middle; /* Good for inline or flex alignment */
 }
 
 #pr-list li:last-child {
