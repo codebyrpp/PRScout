@@ -3,6 +3,13 @@
 
 const PR_CHECK_ALARM_NAME = "prCheckAlarm";
 const BOOKMARK_FOLDER_TITLE = "Pull Requests";
+
+// Browser type enum
+const BrowserType = {
+  CHROME: "chrome",
+  FIREFOX: "firefox",
+  UNKNOWN: "unknown",
+};
 let pollingIntervalMinutes = 1; // Default to 1 minute, will be updated from storage
 
 async function getPollingInterval() {
@@ -66,19 +73,16 @@ async function getOrCreateBookmarkFolderId() {
         resolve(results[0].id);
       } else {
         let preferredParentId = null;
-        // Heuristic to determine browser type for specific parent IDs
-        // chrome.runtime.getURL("") returns something like:
-        // chrome-extension://<extension-id>/
-        // moz-extension://<extension-uuid>/
-        const currentUrlScheme = chrome.runtime.getURL("").split(":")[0];
 
-        if (currentUrlScheme === "chrome-extension") {
+        const browserType = determineBrowser();
+
+        if (browserType === BrowserType.CHROME) {
           // Chrome or Chromium-based (e.g., Edge, Opera, Zen)
           preferredParentId = "1"; // Standard ID for the Bookmarks Bar in Chrome/Chromium
           console.log(
             "Detected Chromium-based browser. Preferred parent ID for bookmarks: '1'"
           );
-        } else if (currentUrlScheme === "moz-extension") {
+        } else if (browserType === BrowserType.FIREFOX) {
           // Firefox
           preferredParentId = "toolbar_____"; // Standard ID for the Bookmarks Toolbar in Firefox
           console.log(
@@ -139,6 +143,21 @@ async function getOrCreateBookmarkFolderId() {
       }
     });
   });
+}
+
+function determineBrowser() {
+  /// Heuristic to determine browser type for specific parent IDs
+  /// chrome.runtime.getURL("") returns something like:
+  /// chrome-extension://<extension-id>/
+  /// moz-extension://<extension-uuid>/
+  const currentUrlScheme = chrome.runtime.getURL("").split(":")[0];
+  if (currentUrlScheme === "chrome-extension") {
+    return BrowserType.CHROME;
+  } else if (currentUrlScheme === "moz-extension") {
+    return BrowserType.FIREFOX;
+  } else {
+    return BrowserType.UNKNOWN;
+  }
 }
 
 async function addPRBookmark(pr, folderId) {
