@@ -59,7 +59,7 @@ The GitHub Pull Request Notifier is a browser extension that notifies users in r
 - **FR8.2**: The popup must have a button to open the options page.
 - **FR8.3**: The popup must have a list of pull requests assigned to the user.
 - **FR8.4**: The number of pull requests assigned to the user must be displayed in the popup.
-- **FR8.5**: The number of pull requests assigned to the user must be show next to the extension icon in the browser toolbar.
+- **FR8.5**: The number of pull requests assigned to the user must be shown next to the extension icon in the browser toolbar.
 
 ---
 
