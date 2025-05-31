@@ -5,7 +5,7 @@ body {
   color: #24292e;
   width: 350px;
   height: 500px;
-  padding: 15px;
+  padding-inline: 15px;
   font-size: 14px;
   line-height: 1.5;
 }
@@ -14,6 +14,13 @@ h1 {
   font-size: 24px;
   font-weight: 600;
   color: #24292e;
+}
+
+#header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
 }
 
 #user-status p,
@@ -69,9 +76,8 @@ hr {
   list-style-type: none;
   padding-left: 0;
   margin-top: 5px;
-  max-height: 250px; /* Adjusted max-height */
+  flex-grow: 1;
   overflow-y: auto;
-  border: 1px solid #e1e4e8;
   border-radius: 6px;
 }
 
