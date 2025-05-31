@@ -12,7 +12,10 @@
   </head>
   <body>
     <div id="header-container">
-      <h1>PullRadar</h1>
+      <h1 id="header-title">
+        <img src="./icons/icon48.png" alt="PullRadar icon" id="header-icon" />
+        <strong>P</strong>ull<strong>R</strong>adar
+      </h1>
       <div id="user-status-area" style="display: flex; align-items: center">
         <p
           id="user-status-message"
@@ -63,7 +66,7 @@
       <p><button id="open-options-page">Open Options</button></p>
     </div>
     <div id="pr-list-container" style="display: none">
-      <h3>Assigned Pull Requests: <span id="pr-count">0</span></h3>
+      <h3>Assigned PRs: <span id="pr-count">0</span></h3>
       <ul id="pr-list">
         <!-- PRs will be listed here -->
       </ul>

@@ -283,3 +283,15 @@ hr {
 #popup-status.error {
   color: #cb2431; /* Error color */
 }
+
+#header-title {
+  display: flex;
+  align-items: center;
+}
+
+#header-icon {
+  width: 24px; /* Adjust size as needed */
+  height: 24px; /* Adjust size as needed */
+  vertical-align: middle; /* Align with the text */
+  margin-right: 8px; /* Space between icon and text */
+}
