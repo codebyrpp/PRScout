@@ -9,13 +9,30 @@
     <h1>PullRadar Options</h1>
 
     <div>
-      <label for="backend-url">Backend Service URL:</label>
-      <input type="url" id="backend-url" name="backend-url" size="50" />
-      <button id="save-options">Save</button>
+      <label for="github-pat">GitHub Personal Access Token:</label>
+      <input type="password" id="github-pat" name="github-pat" size="50" />
+      <p class="info">
+        Required for accessing GitHub API. Ensure it has 'repo' and
+        'notifications' scopes.
+      </p>
     </div>
 
+    <div>
+      <label for="polling-interval">Polling Interval (seconds):</label>
+      <input
+        type="number"
+        id="polling-interval"
+        name="polling-interval"
+        min="10"
+        value="60"
+      />
+      <p class="info">Minimum 10 seconds. Default is 60 seconds.</p>
+    </div>
+
+    <button id="save-options">Save</button>
     <div id="status"></div>
 
+    <script src="auth.js"></script>
     <script src="options.js"></script>
   </body>
 </html>

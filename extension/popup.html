@@ -7,9 +7,26 @@
   </head>
   <body>
     <h1>PullRadar</h1>
-    <div id="pr-list">
-      <!-- PRs will be listed here -->
+    <div id="user-status">
+      <p id="user-info">Loading user information...</p>
+      <button id="options-button" style="display: none">Configure Token</button>
     </div>
+    <hr />
+    <div id="pr-summary">
+      <p>Open the options to set your GitHub Token and preferences.</p>
+      <p><button id="open-options-page">Open Options</button></p>
+    </div>
+    <div id="pr-list-container" style="display: none">
+      <h3>Assigned Pull Requests:</h3>
+      <ul id="pr-list">
+        <!-- PRs will be listed here -->
+      </ul>
+      <p id="no-prs-message" style="display: none">
+        No pull requests assigned to you currently.
+      </p>
+    </div>
+    <script src="auth.js"></script>
+    <!-- For getGitHubPAT -->
     <script src="popup.js"></script>
   </body>
 </html>

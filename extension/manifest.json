@@ -3,7 +3,14 @@
   "name": "PullRadar",
   "version": "1.0",
   "description": "Notifies you when a pull request is assigned to you.",
-  "permissions": ["notifications", "storage", "identity", "bookmarks"],
+  "permissions": [
+    "notifications",
+    "storage",
+    "identity",
+    "bookmarks",
+    "alarms"
+  ],
+  "host_permissions": ["*://api.github.com/*"],
   "background": {
     "service_worker": "background.js"
   },
