@@ -6,6 +6,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const saveButton = document.getElementById("save-options");
   const statusDiv = document.getElementById("status");
 
+  function showStatus(message, isError = false) {
+    statusDiv.textContent = message;
+    statusDiv.className = isError ? "error" : "success";
+    setTimeout(() => {
+      statusDiv.textContent = "";
+      statusDiv.className = "";
+    }, 3000);
+  }
+
   // Load saved options
   chrome.storage.sync.get(["githubPat", "pollingInterval"], (data) => {
     if (data.githubPat) {
@@ -25,18 +34,20 @@ document.addEventListener("DOMContentLoaded", () => {
     const pollingInterval = parseInt(pollingIntervalInput.value, 10);
 
     if (!githubPat) {
-      statusDiv.textContent = "GitHub Personal Access Token cannot be empty.";
+      showStatus("GitHub Personal Access Token cannot be empty.", true);
       return;
     }
 
     if (isNaN(pollingInterval) || pollingInterval < 10) {
-      statusDiv.textContent =
-        "Polling interval must be a number and at least 10 seconds.";
+      showStatus(
+        "Polling interval must be a number and at least 10 seconds.",
+        true
+      );
       return;
     }
 
     chrome.storage.sync.set({ githubPat, pollingInterval }, () => {
-      statusDiv.textContent = "Options saved.";
+      showStatus("Options saved successfully.");
       // Inform background script about the changes
       chrome.runtime.sendMessage({ type: "optionsChanged" }, (response) => {
         if (chrome.runtime.lastError) {
@@ -51,9 +62,6 @@ document.addEventListener("DOMContentLoaded", () => {
           );
         }
       });
-      setTimeout(() => {
-        statusDiv.textContent = "";
-      }, 3000);
     });
   });
 });
