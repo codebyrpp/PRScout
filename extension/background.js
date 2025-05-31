@@ -4,7 +4,7 @@ importScripts("auth.js");
 // It will handle GitHub webhook events, manage notifications, and bookmarks.
 
 const PR_CHECK_ALARM_NAME = "prCheckAlarm";
-const BOOKMARK_FOLDER_TITLE = "Assigned GitHub PRs";
+const BOOKMARK_FOLDER_TITLE = "Pull Requests";
 let pollingIntervalMinutes = 1; // Default to 1 minute, will be updated from storage
 
 async function getPollingInterval() {
