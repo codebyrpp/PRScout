@@ -1,0 +1,16 @@
+body {
+  font-family: sans-serif;
+  width: 300px;
+  padding: 10px;
+}
+
+h1 {
+  font-size: 1.2em;
+  margin-top: 0;
+}
+
+#pr-list {
+  margin-top: 10px;
+  max-height: 400px;
+  overflow-y: auto;
+}

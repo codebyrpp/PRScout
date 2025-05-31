@@ -1,0 +1,33 @@
+body {
+  font-family: sans-serif;
+  padding: 20px;
+}
+
+h1 {
+  font-size: 1.5em;
+}
+
+div {
+  margin-bottom: 15px;
+}
+
+label {
+  display: inline-block;
+  width: 150px;
+}
+
+input[type="url"] {
+  width: 300px;
+  padding: 5px;
+}
+
+button {
+  padding: 8px 15px;
+  cursor: pointer;
+}
+
+#status {
+  margin-top: 10px;
+  color: green;
+  font-weight: bold;
+}
