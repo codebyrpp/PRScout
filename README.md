@@ -1,11 +1,11 @@
 <h1 style="display: flex; align-items: center; gap: 4px; margin-bottom: 8px; border-bottom: none;">
   <img
     src="./extension/icons/icon48.png"
-    alt="PullRadar icon"
+    alt="PRScout icon"
     id="header-icon"
   />
-  <span style="margin-left: 8px">
-    <strong>P</strong>ull<strong>R</strong>adar
+  <span style="margin-left: 8px; font-weight: 300; vertical-align: middle; line-height: 1; display: inline-block;">
+    <strong style="font-weight: 700">pr</strong>scout
   </span>
 </h1>
 
@@ -15,7 +15,7 @@ I've found that managing pull requests efficiently is crucial for my own product
 
 ## Overview 📖
 
-PullRadar is a browser extension for Chrome and Firefox browsers that I built to solve my own workflow challenges. It notifies you in real-time when a pull request is assigned to you, and helps you organize, track, and manage your PRs directly from your browser.
+PRScout is a browser extension for Chrome and Firefox browsers that I built to solve my own workflow challenges. It notifies you in real-time when a pull request is assigned to you, and helps you organize, track, and manage your PRs directly from your browser.
 
 ## Features 🚀
 
@@ -58,7 +58,7 @@ _Coming soon - extension will be available on Chrome Web Store and Firefox Add-o
    - Generate a fine grained token with Repository Permissions to Pull Requests with read access.
 
 2. **Configure the Extension**:
-   - Click the PullRadar icon in your browser toolbar
+   - Click the PRScout icon in your browser toolbar
    - Click the settings icon or "Open Options"
    - Enter your GitHub Personal Access Token
    - Adjust polling interval as needed (default: 60 seconds)
@@ -112,7 +112,7 @@ pullradar/
 
 ## Contributing 🤝
 
-I welcome contributions from anyone interested in improving PullRadar! Whether you're fixing bugs, adding features, improving documentation, or suggesting enhancements - all help is appreciated.
+I welcome contributions from anyone interested in improving PRScout! Whether you're fixing bugs, adding features, improving documentation, or suggesting enhancements - all help is appreciated.
 
 ### Quick Contributing Guide
 
@@ -140,7 +140,7 @@ This project is open source and available under the [MIT License](./LICENSE).
 
 ## Contributors ✨
 
-Thanks to all the contributors who have helped make PullRadar better!
+Thanks to all the contributors who have helped make PRScout better!
 
 <!-- Contributors list will be automatically updated -->
 
@@ -154,4 +154,4 @@ _Contributor list coming soon!_
 
 ---
 
-⭐ **Star this repository** if you find PullRadar useful!
+⭐ **Star this repository** if you find PRScout useful!

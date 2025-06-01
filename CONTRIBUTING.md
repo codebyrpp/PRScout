@@ -1,6 +1,6 @@
-# Contributing to PullRadar 🤝
+# Contributing to PRScout 🤝
 
-Hey there! 👋 Thanks for your interest in contributing to PullRadar! I welcome contributions from everyone - whether you're fixing bugs, adding cool features, improving docs, or just suggesting awesome ideas.
+Hey there! 👋 Thanks for your interest in contributing to PRScout! I welcome contributions from everyone - whether you're fixing bugs, adding cool features, improving docs, or just suggesting awesome ideas.
 
 _Quick note: This is a personal project that I work on in my spare time, so please be patient with response times. I'll do my best to review contributions and provide feedback when I can!_
 
@@ -282,6 +282,6 @@ _If you made visual changes, show them off!_
 
 ## Thanks! 🙏
 
-Thank you for contributing to PullRadar! 🚀
+Thank you for contributing to PRScout! 🚀
 
 You're helping make GitHub workflow management better for everyone!

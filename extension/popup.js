@@ -62,7 +62,7 @@ async function initializeFooter() {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  console.log("PullRadar popup loaded.");
+  console.log("PRScout popup loaded.");
 
   // Initialize theme and footer first
   await initializeTheme();

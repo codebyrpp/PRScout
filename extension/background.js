@@ -228,7 +228,7 @@ async function checkPRs() {
     chrome.notifications.create("config-pat-reminder", {
       type: "basic",
       iconUrl: "icons/icon128.png",
-      title: "PullRadar Setup Needed",
+      title: "PRScout Setup Needed",
       message:
         "Please configure your GitHub Personal Access Token in the extension options.",
     });
@@ -312,7 +312,7 @@ async function checkPRs() {
 // --- Event Listeners ---
 
 chrome.runtime.onInstalled.addListener(async (details) => {
-  console.log("PullRadar extension installed/updated.", details);
+  console.log("PRScout extension installed/updated.", details);
   // Initial setup on install/update
   await fetchUserDetails(); // Try to get user details early
   await schedulePRCheckAlarm();
@@ -378,7 +378,7 @@ chrome.notifications.onClicked.addListener((notificationId) => {
 //   // This requires checking if removeInfo.node.url was one of our PRs
 // });
 
-console.log("PullRadar background script loaded.");
+console.log("Background script loaded.");
 // Initial scheduling of the alarm when the extension loads (not just onInstalled)
 // This handles cases where the browser starts up, or the extension is enabled.
 schedulePRCheckAlarm();

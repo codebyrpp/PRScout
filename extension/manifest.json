@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "PullRadar",
+  "name": "PRScout",
   "version": "1.0",
   "description": "Notifies you when a pull request is assigned to you.",
   "permissions": [
