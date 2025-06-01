@@ -8,17 +8,20 @@ body {
   color: var(--text-primary);
   width: 350px;
   height: 500px; /* Ensure body has a defined height */
-  padding-inline: 15px;
+  padding: 0; /* Remove padding to allow full height usage */
   font-size: 14px;
   line-height: 1.5;
   display: flex; /* Use flexbox */
   flex-direction: column; /* Stack children vertically */
   margin: 0; /* Remove default body margin */
+  overflow: hidden; /* Prevent body scroll */
 }
 
 #content-wrap {
-  flex: 1 0 auto; /* Allow content to grow and shrink, but don't shrink below content size */
-  /* padding-bottom: 15px; */ /* Optional: if you want some space before the footer line */
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* Take full height */
+  overflow: hidden; /* Prevent wrap scroll */
 }
 
 h1 {
@@ -31,7 +34,25 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 4px;
+  padding: 0 15px 0 15px;
+  background-color: var(--bg-primary);
+  border-bottom: 1px solid var(--border-primary);
+  flex-shrink: 0; /* Prevent header from shrinking */
+  z-index: 100; /* Ensure header stays on top */
+}
+
+/* Main content area that scrolls */
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 15px; /* Horizontal padding for content */
+  display: flex;
+  flex-direction: column;
+}
+
+#pr-summary,
+#all-prs-sections-container {
+  padding: 15px 0;
 }
 
 #user-status p,
@@ -200,7 +221,7 @@ hr {
   z-index: 1000;
   display: flex;
   flex-direction: column;
-  overflow-y: auto; /* Allows scrolling if content is too long */
+  overflow: hidden; /* Prevent panel scroll, content will scroll */
 }
 
 #options-panel.options-panel-visible {
@@ -214,7 +235,8 @@ hr {
   padding: 10px 15px;
   border-bottom: 1px solid var(--border-primary);
   background-color: var(--bg-secondary); /* Match panel background */
-  position: relative; /* For absolute positioning of title if needed, or flex alignment */
+  flex-shrink: 0; /* Prevent header from shrinking */
+  z-index: 101; /* Ensure header stays on top */
 }
 
 .options-panel-header h2 {
@@ -273,8 +295,9 @@ hr {
 }
 
 .options-panel-content {
+  flex: 1;
+  overflow-y: auto;
   padding: 15px;
-  flex-grow: 1;
 }
 
 .options-panel-content .form-group {
@@ -374,12 +397,11 @@ hr {
 
 footer {
   text-align: center;
-  padding: 10px 15px; /* Added horizontal padding to match body */
+  padding: 10px 0; /* Remove horizontal padding since parent has it */
   font-size: 12px;
   color: var(--text-secondary); /* Subtler text color */
   border-top: 1px solid var(--border-primary); /* Optional separator line */
-  /* margin-top: 15px; */ /* No longer needed, flexbox handles spacing */
-  flex-shrink: 0; /* Prevent footer from shrinking */
+  margin-top: 15px; /* Add margin top for spacing */
 }
 
 footer p {
