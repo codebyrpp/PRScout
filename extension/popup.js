@@ -256,7 +256,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       allPRsSectionsContainer.style.display = "block";
 
     if (userStatusMessageP) {
-      userStatusMessageP.textContent = "Fetching user info...";
+      userStatusMessageP.textContent = "...";
       userStatusMessageP.style.display = "inline";
     }
     const user = await fetchUserDetails(); // From auth.js
@@ -280,7 +280,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       ]);
     } else {
       if (userStatusMessageP) {
-        userStatusMessageP.textContent = "Invalid PAT or error fetching user.";
+        userStatusMessageP.textContent = "Uh-oh! 🤨";
+        userStatusMessageP.title =
+          "Invalid PAT or error fetching user. Please check your PAT and try again.";
         userStatusMessageP.style.display = "inline";
       }
       if (userAvatarLink) userAvatarLink.style.display = "none";
