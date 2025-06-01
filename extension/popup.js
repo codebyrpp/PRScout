@@ -332,12 +332,71 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     );
     if (statusDiv) statusDiv.textContent = ""; // Clear status on load
+
+    // Clear PAT error when panel opens
+    const patErrorDiv = document.getElementById("pat-error-message");
+    if (patErrorDiv) {
+      patErrorDiv.style.display = "none";
+      patErrorDiv.textContent = "";
+    }
+  }
+
+  // Function to validate PAT by testing GitHub API
+  async function validatePAT(pat) {
+    try {
+      const response = await fetch("https://api.github.com/user", {
+        headers: {
+          Authorization: `Bearer ${pat}`,
+          Accept: "application/vnd.github.v3+json",
+          "X-GitHub-Api-Version": "2022-11-28",
+        },
+      });
+
+      if (response.ok) {
+        return { valid: true };
+      } else if (response.status === 401) {
+        return {
+          valid: false,
+          error:
+            "This token isn't working. Please check if it's correct or create a new one.",
+        };
+      } else if (response.status === 403) {
+        const remaining = response.headers.get("X-RateLimit-Remaining");
+        if (remaining === "0") {
+          return {
+            valid: false,
+            error:
+              "Too many requests right now. Please wait a moment and try again.",
+          };
+        }
+        return {
+          valid: false,
+          error:
+            "This token doesn't have the right permissions. Make sure it can read Pull Requests.",
+        };
+      } else {
+        return {
+          valid: false,
+          error: "Something went wrong connecting to GitHub. Please try again.",
+        };
+      }
+    } catch (error) {
+      return {
+        valid: false,
+        error:
+          "Can't connect to GitHub right now. Check your internet connection.",
+      };
+    }
   }
 
   // Save options from the panel
   async function saveOptionsFromPanel() {
     const saveButton = document.getElementById("popup-save-options");
     const statusDiv = document.getElementById("popup-status");
+    const patErrorDiv = document.getElementById("pat-error-message");
+
+    // Get current PAT to check if it's being changed
+    const currentPat = await getGitHubPAT();
 
     // Get form values
     const pat = patInput.value.trim();
@@ -347,11 +406,25 @@ document.addEventListener("DOMContentLoaded", async () => {
     const footerCheckbox = document.getElementById("popup-show-footer");
     const showFooter = footerCheckbox ? footerCheckbox.checked : true;
 
-    // Validation
+    // Check if PAT is actually changing
+    const patChanged = currentPat !== pat;
+
+    // Clear previous errors
+    if (patErrorDiv) {
+      patErrorDiv.style.display = "none";
+      patErrorDiv.textContent = "";
+    }
+    if (statusDiv) {
+      statusDiv.textContent = "";
+      statusDiv.className = "status-message";
+    }
+
+    // Basic validation
     if (!pat) {
-      if (statusDiv) {
-        statusDiv.textContent = "Error: GitHub PAT cannot be empty.";
-        statusDiv.className = "status-message error";
+      if (patErrorDiv) {
+        patErrorDiv.textContent =
+          "Please enter your GitHub token to get started.";
+        patErrorDiv.style.display = "block";
       }
       return;
     }
@@ -371,17 +444,31 @@ document.addEventListener("DOMContentLoaded", async () => {
       saveButton.classList.add("saving");
       saveButton.title = "Saving...";
     }
-    if (statusDiv) {
-      statusDiv.textContent = "";
-      statusDiv.className = "status-message";
-    }
 
     try {
+      // Validate PAT with GitHub API if it's new or changed
+      if (patChanged) {
+        const validation = await validatePAT(pat);
+        if (!validation.valid) {
+          if (patErrorDiv) {
+            patErrorDiv.textContent = validation.error;
+            patErrorDiv.style.display = "block";
+          }
+          // Reset save button state
+          if (saveButton) {
+            saveButton.disabled = false;
+            saveButton.classList.remove("saving");
+            saveButton.title = "Save Options";
+          }
+          return;
+        }
+      }
+
       await setGitHubPAT(pat); // from auth.js
       await setThemePreference(theme); // Apply theme immediately
       await setFooterPreference(showFooter); // Apply footer visibility immediately
 
-      chrome.storage.sync.set({ pollingInterval: interval }, () => {
+      chrome.storage.sync.set({ pollingInterval: interval }, async () => {
         console.log(
           "Options saved. PAT, interval, theme, and footer visibility updated."
         );
@@ -399,11 +486,6 @@ document.addEventListener("DOMContentLoaded", async () => {
           }
         }
 
-        // Clear any previous status messages
-        if (statusDiv) {
-          statusDiv.textContent = "";
-        }
-
         // Notify background script of changes
         chrome.runtime.sendMessage({ type: "optionsChanged" }, (response) => {
           if (chrome.runtime.lastError) {
@@ -418,6 +500,16 @@ document.addEventListener("DOMContentLoaded", async () => {
             );
           }
         });
+
+        // If PAT changed, reload popup content after a short delay
+        if (patChanged) {
+          console.log("PAT changed, reloading popup content...");
+          setTimeout(async () => {
+            await displayAllPRs();
+            // Close the options panel to show the updated content
+            toggleOptionsPanel();
+          }, 500); // Small delay to let the save animation show
+        }
 
         // Reset button state after 1 second
         setTimeout(() => {
@@ -501,6 +593,17 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
   if (saveButton) {
     saveButton.addEventListener("click", saveOptionsFromPanel);
+  }
+
+  // Add event listener to clear PAT error when user types
+  if (patInput) {
+    patInput.addEventListener("input", () => {
+      const patErrorDiv = document.getElementById("pat-error-message");
+      if (patErrorDiv && patErrorDiv.style.display !== "none") {
+        patErrorDiv.style.display = "none";
+        patErrorDiv.textContent = "";
+      }
+    });
   }
 
   // Initial load
