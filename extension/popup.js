@@ -355,6 +355,29 @@ document.addEventListener("DOMContentLoaded", async () => {
     toggleOptionsPanel(); // New behavior
   }
 
+  // Function to open popup in new window
+  function openInNewWindow() {
+    const popupUrl = chrome.runtime.getURL("popup.html");
+    chrome.windows.create(
+      {
+        url: popupUrl,
+        type: "popup",
+        width: 400,
+        height: 600,
+        focused: true,
+      },
+      (window) => {
+        if (chrome.runtime.lastError) {
+          console.error("Failed to open new window:", chrome.runtime.lastError);
+        } else {
+          console.log("Opened popup in new window:", window);
+          // Close the current popup
+          window.close();
+        }
+      }
+    );
+  }
+
   if (openOptionsPageButton) {
     // This is the button in the initial summary view
     openOptionsPageButton.addEventListener("click", toggleOptionsPanel); // Also make this toggle the panel
@@ -362,6 +385,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (optionsButton) {
     // This is the settings icon
     optionsButton.addEventListener("click", openOptions);
+  }
+  // Add event listener for new window button
+  const openNewWindowButton = document.getElementById("open-new-window-button");
+  if (openNewWindowButton) {
+    openNewWindowButton.addEventListener("click", openInNewWindow);
   }
   if (backOptionsPanelButton) {
     // New back button listener

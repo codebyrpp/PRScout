@@ -173,6 +173,17 @@ hr {
   ); /* Light grey background on hover for light theme */
 }
 
+#open-new-window-button svg {
+  display: block; /* Removes extra space below SVG if its parent is line-height sensitive */
+  color: var(--text-primary);
+}
+
+#open-new-window-button:hover {
+  background-color: var(
+    --bg-button-settings-hover
+  ); /* Light grey background on hover for light theme */
+}
+
 /* Slide-in Options Panel Styles */
 #options-panel {
   position: fixed;
