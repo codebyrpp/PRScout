@@ -431,22 +431,6 @@ footer p a:visited {
   display: none; /* Remove default marker for Chrome/Safari */
 }
 
-.pr-section summary::after {
-  /* Chevron icon */
-  content: " "; /* Will be background image or SVG */
-  width: 16px;
-  height: 16px;
-  display: inline-block;
-  transition: transform 0.2s;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-  background-repeat: no-repeat;
-  background-position: center;
-}
-
-.pr-section[open] > summary::after {
-  transform: rotate(180deg);
-}
-
 .pr-list-items {
   list-style-type: none;
   padding-left: 0;
