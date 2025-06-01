@@ -62,11 +62,13 @@ button:hover,
 }
 
 #options-button {
-  background-color: #0366d6; /* Blue button for PAT configuration */
+  background-color: var(
+    --bg-button-blue
+  ); /* Blue button for PAT configuration */
 }
 
 #options-button:hover {
-  background-color: #005cc5;
+  background-color: var(--bg-button-blue-hover);
 }
 
 hr {
@@ -249,13 +251,13 @@ hr {
   border: none;
   font-size: 24px;
   font-weight: bold;
-  color: #586069;
+  color: var(--text-secondary);
   cursor: pointer;
   padding: 0 5px;
   line-height: 1;
 }
 #close-options-panel:hover {
-  color: #24292e;
+  color: var(--text-primary);
 }
 
 .options-panel-content {
@@ -299,7 +301,7 @@ hr {
 .options-panel-content select:focus {
   border-color: var(--text-link);
   outline: none;
-  box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.3);
+  box-shadow: var(--shadow-focus);
 }
 
 .options-panel-content .info {
@@ -328,10 +330,10 @@ hr {
 #popup-status {
   margin-top: 10px;
   font-size: 13px;
-  color: #2c974b; /* Default success color */
+  color: var(--text-success); /* Default success color */
 }
 #popup-status.error {
-  color: #cb2431; /* Error color */
+  color: var(--text-error); /* Error color */
 }
 
 #header-title {

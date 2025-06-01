@@ -15,16 +15,23 @@
   --text-secondary: #586069;
   --text-link: #0366d6;
   --text-button: #fff;
+  --text-success: #2c974b;
+  --text-error: #cb2431;
 
   --border-primary: #e1e4e8;
   --border-secondary: #d1d5da;
   --border-button: rgba(27, 31, 35, 0.15);
 
   --shadow-panel: -2px 0 5px rgba(0, 0, 0, 0.1);
+  --shadow-focus: 0 0 0 3px rgba(88, 166, 255, 0.3);
 
   /* Spinner colors */
   --spinner-border: rgba(0, 0, 0, 0.1);
   --spinner-accent: #09f;
+
+  /* Deprecated/legacy button colors */
+  --bg-button-blue: #0366d6;
+  --bg-button-blue-hover: #005cc5;
 }
 
 /* Dark theme - applied when data-theme="dark" OR system preference is dark and data-theme="system" */
@@ -43,16 +50,23 @@
   --text-secondary: #8b949e;
   --text-link: #58a6ff;
   --text-button: #ffffff;
+  --text-success: #3fb950;
+  --text-error: #f85149;
 
   --border-primary: #30363d;
   --border-secondary: #30363d;
   --border-button: rgba(240, 246, 252, 0.1);
 
   --shadow-panel: -2px 0 5px rgba(0, 0, 0, 0.3);
+  --shadow-focus: 0 0 0 3px rgba(88, 166, 255, 0.3);
 
   /* Spinner colors */
   --spinner-border: rgba(255, 255, 255, 0.1);
   --spinner-accent: #58a6ff;
+
+  /* Deprecated/legacy button colors */
+  --bg-button-blue: #58a6ff;
+  --bg-button-blue-hover: #3d8bfd;
 }
 
 /* System preference dark theme - only when data-theme="system" or not set */
@@ -72,15 +86,22 @@
     --text-secondary: #8b949e;
     --text-link: #58a6ff;
     --text-button: #ffffff;
+    --text-success: #3fb950;
+    --text-error: #f85149;
 
     --border-primary: #30363d;
     --border-secondary: #30363d;
     --border-button: rgba(240, 246, 252, 0.1);
 
     --shadow-panel: -2px 0 5px rgba(0, 0, 0, 0.3);
+    --shadow-focus: 0 0 0 3px rgba(88, 166, 255, 0.3);
 
     /* Spinner colors */
     --spinner-border: rgba(255, 255, 255, 0.1);
     --spinner-accent: #58a6ff;
+
+    /* Deprecated/legacy button colors */
+    --bg-button-blue: #58a6ff;
+    --bg-button-blue-hover: #3d8bfd;
   }
 }
