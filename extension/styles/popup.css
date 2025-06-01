@@ -288,6 +288,18 @@ hr {
   font-size: 13px;
 }
 
+.options-panel-content label.checkbox-label {
+  display: flex;
+  align-items: center;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.options-panel-content input[type="checkbox"] {
+  margin-right: 8px;
+  accent-color: var(--text-link);
+}
+
 .options-panel-content input[type="password"],
 .options-panel-content input[type="number"] {
   width: calc(100% - 18px); /* Full width minus padding and border */

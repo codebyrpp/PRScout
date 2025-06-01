@@ -27,11 +27,46 @@ async function initializeTheme() {
   }
 }
 
+// Footer management functions
+async function getFooterPreference() {
+  return new Promise((resolve) => {
+    chrome.storage.sync.get({ showFooter: true }, (data) => {
+      resolve(data.showFooter);
+    });
+  });
+}
+
+async function setFooterPreference(showFooter) {
+  return new Promise((resolve) => {
+    chrome.storage.sync.set({ showFooter }, () => {
+      const footer = document.querySelector("footer");
+      if (footer) {
+        footer.style.display = showFooter ? "block" : "none";
+      }
+      resolve();
+    });
+  });
+}
+
+async function initializeFooter() {
+  const showFooter = await getFooterPreference();
+  const footer = document.querySelector("footer");
+  const footerCheckbox = document.getElementById("popup-show-footer");
+
+  if (footer) {
+    footer.style.display = showFooter ? "block" : "none";
+  }
+  if (footerCheckbox) {
+    footerCheckbox.checked = showFooter;
+  }
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   console.log("PullRadar popup loaded.");
 
-  // Initialize theme first
+  // Initialize theme and footer first
   await initializeTheme();
+  await initializeFooter();
 
   // const userInfoP = document.getElementById("user-info"); // No longer used directly for detailed user name/login
   // const userLoginP = document.getElementById("user-login"); // Removed
@@ -279,7 +314,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       patInput.value = currentPat;
     }
     chrome.storage.sync.get(
-      { pollingInterval: 60, theme: "system" },
+      { pollingInterval: 60, theme: "system", showFooter: true },
       (data) => {
         if (intervalInput) {
           intervalInput.value = data.pollingInterval;
@@ -287,6 +322,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         const themeSelect = document.getElementById("popup-theme-select");
         if (themeSelect) {
           themeSelect.value = data.theme;
+        }
+        const footerCheckbox = document.getElementById("popup-show-footer");
+        if (footerCheckbox) {
+          footerCheckbox.checked = data.showFooter;
         }
       }
     );
@@ -299,6 +338,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const interval = parseInt(intervalInput.value, 10);
     const themeSelect = document.getElementById("popup-theme-select");
     const theme = themeSelect ? themeSelect.value : "system";
+    const footerCheckbox = document.getElementById("popup-show-footer");
+    const showFooter = footerCheckbox ? footerCheckbox.checked : true;
 
     if (!pat) {
       if (statusDiv) {
@@ -319,12 +360,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     await setGitHubPAT(pat); // from auth.js
     await setThemePreference(theme); // Apply theme immediately
+    await setFooterPreference(showFooter); // Apply footer visibility immediately
     chrome.storage.sync.set({ pollingInterval: interval }, () => {
       if (statusDiv) {
         statusDiv.textContent = "Options saved successfully!";
         statusDiv.className = "status-message"; // Reset to default color
       }
-      console.log("Options saved. PAT, interval, and theme updated.");
+      console.log(
+        "Options saved. PAT, interval, theme, and footer visibility updated."
+      );
       // Notify background script of changes so it can reschedule alarms etc.
       chrome.runtime.sendMessage({ type: "optionsChanged" }, (response) => {
         if (chrome.runtime.lastError) {
