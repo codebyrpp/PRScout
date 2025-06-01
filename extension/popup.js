@@ -167,7 +167,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     config.loader.style.display = "flex";
     config.listUl.style.display = "none";
     config.noPrsMessage.style.display = "none";
-    config.countSpan.textContent = "(...)";
+    config.countSpan.textContent = "...";
 
     try {
       const prs = await config.fetchFunction(username);
@@ -176,20 +176,20 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       if (prs && prs.length > 0) {
         renderPRItems(config.listUl, prs);
-        config.countSpan.textContent = `(${prs.length})`;
+        config.countSpan.textContent = prs.length;
         if (config.detailsElement) config.detailsElement.open = true; // Open if PRs exist
       } else if (prs) {
         // prs is an empty array
         config.listUl.innerHTML = "";
         config.noPrsMessage.style.display = "block";
-        config.countSpan.textContent = "(0)";
+        config.countSpan.textContent = "0";
       } else {
         // prs is null or undefined (error case)
         config.listUl.innerHTML = "";
         config.noPrsMessage.textContent =
           "Could not load PRs for this section.";
         config.noPrsMessage.style.display = "block";
-        config.countSpan.textContent = "(Error)";
+        config.countSpan.textContent = "⚠️";
       }
     } catch (error) {
       console.error(`Error fetching PRs for ${categoryKey}:`, error);
@@ -197,7 +197,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       config.listUl.innerHTML = "";
       config.noPrsMessage.textContent = "Error loading PRs.";
       config.noPrsMessage.style.display = "block";
-      config.countSpan.textContent = "(Error)";
+      config.countSpan.textContent = "⚠️";
     }
   }
 
@@ -254,7 +254,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (prSummaryDiv) prSummaryDiv.style.display = "block";
       // Reset counts for all sections on user error
       Object.values(categories).forEach((config) => {
-        if (config.countSpan) config.countSpan.textContent = "(0)";
+        if (config.countSpan) config.countSpan.textContent = "0";
         if (config.loader) config.loader.style.display = "none";
         if (config.listUl) config.listUl.innerHTML = "";
         if (config.noPrsMessage) config.noPrsMessage.style.display = "block";
