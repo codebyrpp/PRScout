@@ -285,6 +285,23 @@ hr {
   color: var(--text-primary);
 }
 
+.options-panel-content select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--border-secondary);
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.options-panel-content input:focus,
+.options-panel-content select:focus {
+  border-color: var(--text-link);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.3);
+}
+
 .options-panel-content .info {
   font-size: 12px;
   color: var(--text-secondary);

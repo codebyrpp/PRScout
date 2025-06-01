@@ -27,9 +27,37 @@
   --spinner-accent: #09f;
 }
 
-/* Dark theme */
+/* Dark theme - applied when data-theme="dark" OR system preference is dark and data-theme="system" */
+:root[data-theme="dark"] {
+  --bg-primary: #0d1117;
+  --bg-secondary: #161b22;
+  --bg-tertiary: #21262d;
+  --bg-panel: #0d1117;
+  --bg-list-item: #161b22;
+  --bg-badge: #30363d;
+  --bg-button-primary: #238636;
+  --bg-button-primary-hover: #2ea043;
+  --bg-button-settings-hover: #21262d;
+
+  --text-primary: #c9d1d9;
+  --text-secondary: #8b949e;
+  --text-link: #58a6ff;
+  --text-button: #ffffff;
+
+  --border-primary: #30363d;
+  --border-secondary: #30363d;
+  --border-button: rgba(240, 246, 252, 0.1);
+
+  --shadow-panel: -2px 0 5px rgba(0, 0, 0, 0.3);
+
+  /* Spinner colors */
+  --spinner-border: rgba(255, 255, 255, 0.1);
+  --spinner-accent: #58a6ff;
+}
+
+/* System preference dark theme - only when data-theme="system" or not set */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --bg-primary: #0d1117;
     --bg-secondary: #161b22;
     --bg-tertiary: #21262d;

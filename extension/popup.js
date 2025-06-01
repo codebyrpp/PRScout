@@ -1,6 +1,37 @@
 // JavaScript for the extension popup UI.
+
+// Theme management functions
+async function getThemePreference() {
+  return new Promise((resolve) => {
+    chrome.storage.sync.get({ theme: "system" }, (data) => {
+      resolve(data.theme);
+    });
+  });
+}
+
+async function setThemePreference(theme) {
+  return new Promise((resolve) => {
+    chrome.storage.sync.set({ theme }, () => {
+      document.documentElement.setAttribute("data-theme", theme);
+      resolve();
+    });
+  });
+}
+
+async function initializeTheme() {
+  const theme = await getThemePreference();
+  document.documentElement.setAttribute("data-theme", theme);
+  const themeSelect = document.getElementById("popup-theme-select");
+  if (themeSelect) {
+    themeSelect.value = theme;
+  }
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   console.log("PullRadar popup loaded.");
+
+  // Initialize theme first
+  await initializeTheme();
 
   // const userInfoP = document.getElementById("user-info"); // No longer used directly for detailed user name/login
   // const userLoginP = document.getElementById("user-login"); // Removed
@@ -229,11 +260,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (patInput && currentPat) {
       patInput.value = currentPat;
     }
-    chrome.storage.sync.get({ pollingInterval: 60 }, (data) => {
-      if (intervalInput) {
-        intervalInput.value = data.pollingInterval;
+    chrome.storage.sync.get(
+      { pollingInterval: 60, theme: "system" },
+      (data) => {
+        if (intervalInput) {
+          intervalInput.value = data.pollingInterval;
+        }
+        const themeSelect = document.getElementById("popup-theme-select");
+        if (themeSelect) {
+          themeSelect.value = data.theme;
+        }
       }
-    });
+    );
     if (statusDiv) statusDiv.textContent = ""; // Clear status on load
   }
 
@@ -241,6 +279,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   async function saveOptionsFromPanel() {
     const pat = patInput.value.trim();
     const interval = parseInt(intervalInput.value, 10);
+    const themeSelect = document.getElementById("popup-theme-select");
+    const theme = themeSelect ? themeSelect.value : "system";
 
     if (!pat) {
       if (statusDiv) {
@@ -260,12 +300,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     await setGitHubPAT(pat); // from auth.js
+    await setThemePreference(theme); // Apply theme immediately
     chrome.storage.sync.set({ pollingInterval: interval }, () => {
       if (statusDiv) {
         statusDiv.textContent = "Options saved successfully!";
         statusDiv.className = "status-message"; // Reset to default color
       }
-      console.log("Options saved. PAT and interval updated.");
+      console.log("Options saved. PAT, interval, and theme updated.");
       // Notify background script of changes so it can reschedule alarms etc.
       chrome.runtime.sendMessage({ type: "optionsChanged" }, (response) => {
         if (chrome.runtime.lastError) {
