@@ -1,0 +1,107 @@
+/* Theme variables for PullRadar extension */
+:root {
+  /* Light theme (default) */
+  --bg-primary: #fff;
+  --bg-secondary: #f6f8fa;
+  --bg-tertiary: #f0f0f0;
+  --bg-panel: #f6f8fa;
+  --bg-list-item: #fff;
+  --bg-badge: #e1e4e8;
+  --bg-button-primary: #2c974b;
+  --bg-button-primary-hover: #278742;
+  --bg-button-settings-hover: #f0f0f0;
+
+  --text-primary: #24292e;
+  --text-secondary: #586069;
+  --text-link: #0366d6;
+  --text-button: #fff;
+  --text-success: #2c974b;
+  --text-error: #cb2431;
+
+  --border-primary: #e1e4e8;
+  --border-secondary: #d1d5da;
+  --border-button: rgba(27, 31, 35, 0.15);
+
+  --shadow-panel: -2px 0 5px rgba(0, 0, 0, 0.1);
+  --shadow-focus: 0 0 0 3px rgba(88, 166, 255, 0.3);
+
+  /* Spinner colors */
+  --spinner-border: rgba(0, 0, 0, 0.1);
+  --spinner-accent: #09f;
+
+  /* Deprecated/legacy button colors */
+  --bg-button-blue: #0366d6;
+  --bg-button-blue-hover: #005cc5;
+}
+
+/* Dark theme - applied when data-theme="dark" OR system preference is dark and data-theme="system" */
+:root[data-theme="dark"] {
+  --bg-primary: #0d1117;
+  --bg-secondary: #161b22;
+  --bg-tertiary: #21262d;
+  --bg-panel: #0d1117;
+  --bg-list-item: #161b22;
+  --bg-badge: #30363d;
+  --bg-button-primary: #238636;
+  --bg-button-primary-hover: #2ea043;
+  --bg-button-settings-hover: #21262d;
+
+  --text-primary: #c9d1d9;
+  --text-secondary: #8b949e;
+  --text-link: #58a6ff;
+  --text-button: #ffffff;
+  --text-success: #3fb950;
+  --text-error: #f85149;
+
+  --border-primary: #30363d;
+  --border-secondary: #30363d;
+  --border-button: rgba(240, 246, 252, 0.1);
+
+  --shadow-panel: -2px 0 5px rgba(0, 0, 0, 0.3);
+  --shadow-focus: 0 0 0 3px rgba(88, 166, 255, 0.3);
+
+  /* Spinner colors */
+  --spinner-border: rgba(255, 255, 255, 0.1);
+  --spinner-accent: #58a6ff;
+
+  /* Deprecated/legacy button colors */
+  --bg-button-blue: #58a6ff;
+  --bg-button-blue-hover: #3d8bfd;
+}
+
+/* System preference dark theme - only when data-theme="system" or not set */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg-primary: #0d1117;
+    --bg-secondary: #161b22;
+    --bg-tertiary: #21262d;
+    --bg-panel: #0d1117;
+    --bg-list-item: #161b22;
+    --bg-badge: #30363d;
+    --bg-button-primary: #238636;
+    --bg-button-primary-hover: #2ea043;
+    --bg-button-settings-hover: #21262d;
+
+    --text-primary: #c9d1d9;
+    --text-secondary: #8b949e;
+    --text-link: #58a6ff;
+    --text-button: #ffffff;
+    --text-success: #3fb950;
+    --text-error: #f85149;
+
+    --border-primary: #30363d;
+    --border-secondary: #30363d;
+    --border-button: rgba(240, 246, 252, 0.1);
+
+    --shadow-panel: -2px 0 5px rgba(0, 0, 0, 0.3);
+    --shadow-focus: 0 0 0 3px rgba(88, 166, 255, 0.3);
+
+    /* Spinner colors */
+    --spinner-border: rgba(255, 255, 255, 0.1);
+    --spinner-accent: #58a6ff;
+
+    /* Deprecated/legacy button colors */
+    --bg-button-blue: #58a6ff;
+    --bg-button-blue-hover: #3d8bfd;
+  }
+}

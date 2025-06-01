@@ -4,11 +4,6 @@
     <title>PullRadar Popup</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="styles/popup.css" />
-    <link
-      rel="stylesheet"
-      href="styles/popup-dark.css"
-      media="(prefers-color-scheme: dark)"
-    />
   </head>
   <body>
     <div id="content-wrap">
@@ -66,21 +61,99 @@
         <p>Open the options to set your GitHub Token and preferences.</p>
         <p><button id="open-options-page">Open Options</button></p>
       </div>
-      <div id="pr-list-container" style="display: none">
-        <h3>Assigned PRs: <span id="pr-count">0</span></h3>
-        <div
-          id="pr-list-loader"
-          class="spinner-container"
-          style="display: none"
-        >
-          <div class="spinner"></div>
-        </div>
-        <ul id="pr-list">
-          <!-- PRs will be listed here -->
-        </ul>
-        <p id="no-prs-message" style="display: none">
-          No pull requests assigned to you currently.
-        </p>
+
+      <div id="all-prs-sections-container" style="display: none">
+        <!-- Assigned to You Section -->
+        <details class="pr-section" id="assigned-prs-section" open>
+          <summary>
+            <span class="summary-title">Assigned to you</span
+            ><span class="pr-count-badge" id="assigned-pr-count">(0)</span>
+          </summary>
+          <div
+            id="assigned-pr-list-loader"
+            class="spinner-container"
+            style="display: none"
+          >
+            <div class="spinner"></div>
+          </div>
+          <ul id="assigned-pr-list" class="pr-list-items"></ul>
+          <p
+            id="no-assigned-prs-message"
+            class="no-prs-message-category"
+            style="display: none"
+          >
+            No PRs assigned to you.
+          </p>
+        </details>
+
+        <!-- Created by You Section -->
+        <details class="pr-section" id="created-prs-section">
+          <summary>
+            <span class="summary-title">Created by you</span
+            ><span class="pr-count-badge" id="created-pr-count">(0)</span>
+          </summary>
+          <div
+            id="created-pr-list-loader"
+            class="spinner-container"
+            style="display: none"
+          >
+            <div class="spinner"></div>
+          </div>
+          <ul id="created-pr-list" class="pr-list-items"></ul>
+          <p
+            id="no-created-prs-message"
+            class="no-prs-message-category"
+            style="display: none"
+          >
+            No PRs created by you.
+          </p>
+        </details>
+
+        <!-- Review Requested Section -->
+        <details class="pr-section" id="review-prs-section">
+          <summary>
+            Review requests
+            <span class="pr-count-badge" id="review-pr-count">(0)</span>
+          </summary>
+          <div
+            id="review-pr-list-loader"
+            class="spinner-container"
+            style="display: none"
+          >
+            <div class="spinner"></div>
+          </div>
+          <ul id="review-pr-list" class="pr-list-items"></ul>
+          <p
+            id="no-review-prs-message"
+            class="no-prs-message-category"
+            style="display: none"
+          >
+            No review requests for you.
+          </p>
+        </details>
+
+        <!-- Mentioning You Section -->
+        <details class="pr-section" id="mentioned-prs-section">
+          <summary>
+            Mentioning you
+            <span class="pr-count-badge" id="mentioned-pr-count">(0)</span>
+          </summary>
+          <div
+            id="mentioned-pr-list-loader"
+            class="spinner-container"
+            style="display: none"
+          >
+            <div class="spinner"></div>
+          </div>
+          <ul id="mentioned-pr-list" class="pr-list-items"></ul>
+          <p
+            id="no-mentioned-prs-message"
+            class="no-prs-message-category"
+            style="display: none"
+          >
+            No PRs mentioning you.
+          </p>
+        </details>
       </div>
     </div>
     <footer>
@@ -100,6 +173,23 @@
     <script src="browser-polyfill.min.js"></script>
     <script src="auth.js"></script>
     <script src="popup.js"></script>
+
+    <!-- Templates -->
+    <template id="pr-item-template">
+      <li>
+        <a class="pr-author-avatar-link" target="_blank">
+          <img class="pr-author-avatar" alt="" />
+        </a>
+        <a class="pr-link" target="_blank"></a>
+      </li>
+    </template>
+
+    <template id="pr-item-no-avatar-template">
+      <li>
+        <a class="pr-link" target="_blank"></a>
+      </li>
+    </template>
+
     <div id="options-panel" class="options-panel-hidden">
       <div class="options-panel-header">
         <button
@@ -140,6 +230,15 @@
             value="60"
           />
           <p class="info">Minimum 10 seconds. Default is 60 seconds.</p>
+        </div>
+        <div class="form-group">
+          <label for="popup-theme-select">Theme:</label>
+          <select id="popup-theme-select" name="popup-theme-select">
+            <option value="system">System Default</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+          <p class="info">Choose your preferred theme.</p>
         </div>
         <button id="popup-save-options">Save Options</button>
         <div id="popup-status" class="status-message"></div>
