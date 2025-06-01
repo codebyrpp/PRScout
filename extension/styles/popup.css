@@ -363,3 +363,87 @@ footer p a:visited {
     transform: rotate(360deg);
   }
 }
+
+/* New PR Section Styles */
+.pr-section {
+  margin-bottom: 10px;
+  border: 1px solid #e1e4e8;
+  border-radius: 6px;
+}
+
+.pr-section summary {
+  padding: 8px 12px;
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none; /* Remove default marker */
+  display: flex;
+  align-items: center;
+  /* justify-content: space-between; */ /* Let children manage space */
+}
+
+.summary-title {
+  flex-grow: 1; /* Title takes available space, pushing count and icon to the right */
+}
+
+.pr-count-badge {
+  font-weight: normal;
+  background-color: #e1e4e8;
+  color: #586069;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 12px;
+  margin-left: 8px; /* Space between title and count */
+  margin-right: 4px; /* Space between count and chevron */
+}
+
+.pr-section summary::-webkit-details-marker {
+  display: none; /* Remove default marker for Chrome/Safari */
+}
+
+.pr-section summary::after {
+  /* Chevron icon */
+  content: " "; /* Will be background image or SVG */
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  transition: transform 0.2s;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.pr-section[open] > summary::after {
+  transform: rotate(180deg);
+}
+
+.pr-list-items {
+  list-style-type: none;
+  padding-left: 0;
+  margin-top: 0; /* Reset margin */
+  max-height: 200px; /* Example max height, adjust as needed */
+  overflow-y: auto;
+}
+
+/* Individual list items within .pr-list-items will reuse #pr-list li styles for now */
+.pr-list-items li {
+  padding: 8px 12px;
+  border-top: 1px solid #e1e4e8; /* Use border-top for items in new lists */
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+}
+
+/* Ensure visited links in PR list remain blue */
+.pr-list-items li a:visited {
+  color: #0366d6; /* Match unvisited link color */
+}
+
+.pr-list-items li:first-child {
+  border-top: none; /* Remove top border for the first item in a section if summary has bottom border */
+}
+
+.no-prs-message-category {
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #586069;
+}

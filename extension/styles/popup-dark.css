@@ -167,3 +167,35 @@ footer p a:visited {
   border: 4px solid rgba(255, 255, 255, 0.1); /* Lighter border for dark theme */
   border-left-color: #58a6ff; /* GitHub dark blue for spinner active part */
 }
+
+/* Dark Theme for New PR Sections */
+.pr-section {
+  border-color: #30363d;
+}
+
+.pr-section summary {
+  /* color: #c9d1d9; Inherited */
+}
+
+.pr-section summary::after {
+  /* Chevron icon for dark theme */
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23c9d1d9' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+}
+
+.pr-count-badge {
+  background-color: #30363d;
+  color: #c9d1d9;
+}
+
+.pr-list-items li {
+  border-top-color: #30363d;
+}
+
+/* Ensure visited links in PR list remain blue (dark theme) */
+.pr-list-items li a:visited {
+  color: #58a6ff; /* Match unvisited link color for dark theme */
+}
+
+.no-prs-message-category {
+  color: #8b949e;
+}

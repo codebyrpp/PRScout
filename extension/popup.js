@@ -10,12 +10,52 @@ document.addEventListener("DOMContentLoaded", async () => {
   const openOptionsPageButton = document.getElementById("open-options-page");
   const userAvatarImg = document.getElementById("user-avatar"); // Added for avatar
   const userAvatarLink = document.getElementById("user-avatar-link"); // Added for avatar link
-  const prListUl = document.getElementById("pr-list");
-  const prListContainer = document.getElementById("pr-list-container");
-  const noPRsMessage = document.getElementById("no-prs-message");
   const prSummaryDiv = document.getElementById("pr-summary");
-  const prCountSpan = document.getElementById("pr-count"); // Added for PR count
-  const prListLoader = document.getElementById("pr-list-loader"); // Spinner container
+  const allPRsSectionsContainer = document.getElementById(
+    "all-prs-sections-container"
+  );
+
+  // DOM elements for each PR category
+  const categories = {
+    assigned: {
+      detailsElement: document.getElementById("assigned-prs-section"),
+      loader: document.getElementById("assigned-pr-list-loader"),
+      listUl: document.getElementById("assigned-pr-list"),
+      countSpan: document.getElementById("assigned-pr-count"),
+      noPrsMessage: document.getElementById("no-assigned-prs-message"),
+      fetchFunction: async (username) => fetchAssignedPRs(username), // From auth.js
+    },
+    created: {
+      detailsElement: document.getElementById("created-prs-section"),
+      loader: document.getElementById("created-pr-list-loader"),
+      listUl: document.getElementById("created-pr-list"),
+      countSpan: document.getElementById("created-pr-count"),
+      noPrsMessage: document.getElementById("no-created-prs-message"),
+      // Placeholder: fetchFunction should use a query like `author:${username}`
+      fetchFunction: async (username) =>
+        searchGitHubPRs(`author:${username} is:pr is:open`),
+    },
+    review: {
+      detailsElement: document.getElementById("review-prs-section"),
+      loader: document.getElementById("review-pr-list-loader"),
+      listUl: document.getElementById("review-pr-list"),
+      countSpan: document.getElementById("review-pr-count"),
+      noPrsMessage: document.getElementById("no-review-prs-message"),
+      // Placeholder: fetchFunction should use a query like `review-requested:${username}` or `team-review-requested:@org/team-name`
+      fetchFunction: async (username) =>
+        searchGitHubPRs(`review-requested:${username} is:pr is:open`),
+    },
+    mentioned: {
+      detailsElement: document.getElementById("mentioned-prs-section"),
+      loader: document.getElementById("mentioned-pr-list-loader"),
+      listUl: document.getElementById("mentioned-pr-list"),
+      countSpan: document.getElementById("mentioned-pr-count"),
+      noPrsMessage: document.getElementById("no-mentioned-prs-message"),
+      // Placeholder: fetchFunction should use a query like `mentions:${username}`
+      fetchFunction: async (username) =>
+        searchGitHubPRs(`mentions:${username} is:pr is:open`),
+    },
+  };
 
   // Options Panel Elements
   const optionsPanel = document.getElementById("options-panel");
@@ -24,6 +64,154 @@ document.addEventListener("DOMContentLoaded", async () => {
   const intervalInput = document.getElementById("popup-polling-interval");
   const saveButton = document.getElementById("popup-save-options");
   const statusDiv = document.getElementById("popup-status");
+
+  // Generic function to render PR items into a UL
+  function renderPRItems(prListUl, prs) {
+    prListUl.innerHTML = ""; // Clear previous items
+    if (!prs || prs.length === 0) return;
+
+    prs.forEach((pr) => {
+      const listItem = document.createElement("li");
+      if (pr.user && pr.user.avatar_url && pr.user.html_url) {
+        const authorAvatarLink = document.createElement("a");
+        authorAvatarLink.href = pr.user.html_url;
+        authorAvatarLink.target = "_blank";
+        authorAvatarLink.title =
+          "View profile of " + (pr.user.login || "author");
+        authorAvatarLink.classList.add("pr-author-avatar-link");
+        const authorAvatarImg = document.createElement("img");
+        authorAvatarImg.src = pr.user.avatar_url;
+        authorAvatarImg.alt = (pr.user.login || "Author") + " avatar";
+        authorAvatarImg.classList.add("pr-author-avatar");
+        authorAvatarLink.appendChild(authorAvatarImg);
+        listItem.appendChild(authorAvatarLink);
+      }
+      const prLink = document.createElement("a");
+      prLink.href = pr.html_url;
+      prLink.target = "_blank";
+      const repoName = pr.repository_url
+        ? pr.repository_url.split("/").pop()
+        : pr.repository
+        ? pr.repository.name
+        : "N/A";
+      prLink.textContent = `[${repoName}] ${pr.title}`;
+      listItem.appendChild(prLink);
+      prListUl.appendChild(listItem);
+    });
+  }
+
+  // Generic function to fetch and display PRs for a category
+  async function fetchAndDisplayCategoryPRs(categoryKey, username) {
+    const config = categories[categoryKey];
+    if (
+      !config ||
+      !config.loader ||
+      !config.listUl ||
+      !config.countSpan ||
+      !config.noPrsMessage ||
+      !config.fetchFunction
+    ) {
+      console.error("Configuration missing for category:", categoryKey);
+      return;
+    }
+
+    config.loader.style.display = "flex";
+    config.listUl.style.display = "none";
+    config.noPrsMessage.style.display = "none";
+    config.countSpan.textContent = "(...)";
+
+    try {
+      const prs = await config.fetchFunction(username);
+      config.loader.style.display = "none";
+      config.listUl.style.display = "block";
+
+      if (prs && prs.length > 0) {
+        renderPRItems(config.listUl, prs);
+        config.countSpan.textContent = `(${prs.length})`;
+        if (config.detailsElement) config.detailsElement.open = true; // Open if PRs exist
+      } else if (prs) {
+        // prs is an empty array
+        config.listUl.innerHTML = "";
+        config.noPrsMessage.style.display = "block";
+        config.countSpan.textContent = "(0)";
+      } else {
+        // prs is null or undefined (error case)
+        config.listUl.innerHTML = "";
+        config.noPrsMessage.textContent =
+          "Could not load PRs for this section.";
+        config.noPrsMessage.style.display = "block";
+        config.countSpan.textContent = "(Error)";
+      }
+    } catch (error) {
+      console.error(`Error fetching PRs for ${categoryKey}:`, error);
+      config.loader.style.display = "none";
+      config.listUl.innerHTML = "";
+      config.noPrsMessage.textContent = "Error loading PRs.";
+      config.noPrsMessage.style.display = "block";
+      config.countSpan.textContent = "(Error)";
+    }
+  }
+
+  // Main function to display all PRs
+  async function displayAllPRs() {
+    const pat = await getGitHubPAT();
+    if (!pat) {
+      if (userStatusMessageP) {
+        userStatusMessageP.textContent = "GitHub PAT not set.";
+        userStatusMessageP.style.display = "inline";
+      }
+      if (userAvatarLink) userAvatarLink.style.display = "none";
+      if (prSummaryDiv) prSummaryDiv.style.display = "block";
+      if (allPRsSectionsContainer)
+        allPRsSectionsContainer.style.display = "none";
+      return;
+    }
+
+    if (prSummaryDiv) prSummaryDiv.style.display = "none";
+    if (allPRsSectionsContainer)
+      allPRsSectionsContainer.style.display = "block";
+
+    if (userStatusMessageP) {
+      userStatusMessageP.textContent = "Fetching user info...";
+      userStatusMessageP.style.display = "inline";
+    }
+    const user = await fetchUserDetails(); // From auth.js
+
+    if (user && user.login) {
+      if (userStatusMessageP) userStatusMessageP.style.display = "none";
+      if (user.avatar_url && user.html_url && userAvatarImg && userAvatarLink) {
+        userAvatarImg.src = user.avatar_url;
+        userAvatarLink.href = user.html_url;
+        userAvatarLink.style.display = "inline-block";
+      } else {
+        if (userAvatarLink) userAvatarLink.style.display = "none";
+      }
+
+      // Fetch all categories in parallel
+      await Promise.all([
+        fetchAndDisplayCategoryPRs("assigned", user.login),
+        fetchAndDisplayCategoryPRs("created", user.login),
+        fetchAndDisplayCategoryPRs("review", user.login),
+        fetchAndDisplayCategoryPRs("mentioned", user.login),
+      ]);
+    } else {
+      if (userStatusMessageP) {
+        userStatusMessageP.textContent = "Invalid PAT or error fetching user.";
+        userStatusMessageP.style.display = "inline";
+      }
+      if (userAvatarLink) userAvatarLink.style.display = "none";
+      if (allPRsSectionsContainer)
+        allPRsSectionsContainer.style.display = "none";
+      if (prSummaryDiv) prSummaryDiv.style.display = "block";
+      // Reset counts for all sections on user error
+      Object.values(categories).forEach((config) => {
+        if (config.countSpan) config.countSpan.textContent = "(0)";
+        if (config.loader) config.loader.style.display = "none";
+        if (config.listUl) config.listUl.innerHTML = "";
+        if (config.noPrsMessage) config.noPrsMessage.style.display = "block";
+      });
+    }
+  }
 
   // Function to open/close options panel
   function toggleOptionsPanel() {
@@ -124,114 +312,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     saveButton.addEventListener("click", saveOptionsFromPanel);
   }
 
-  async function displayPRs() {
-    // PRs are fetched by background.js. We can try to get the current user's login
-    // and then fetch PRs directly, or retrieve a list from storage if background.js saves it.
-    // For this version, let's try to fetch them directly using auth.js functions.
-    // This makes the popup always show the latest, but incurs an API call if PAT is valid.
-
-    const pat = await getGitHubPAT(); // from auth.js, included in popup.html
-    if (!pat) {
-      if (userStatusMessageP) {
-        userStatusMessageP.textContent = "GitHub PAT not set.";
-        userStatusMessageP.style.display = "inline";
-      }
-      if (userAvatarLink) userAvatarLink.style.display = "none";
-
-      if (prSummaryDiv) prSummaryDiv.style.display = "block";
-      if (prListContainer) prListContainer.style.display = "none";
-      if (prCountSpan) prCountSpan.textContent = "0";
-      return;
-    }
-
-    if (prSummaryDiv) prSummaryDiv.style.display = "none";
-
-    if (userStatusMessageP) {
-      userStatusMessageP.textContent = "Fetching user info...";
-      userStatusMessageP.style.display = "inline";
-    }
-    const user = await fetchUserDetails();
-
-    if (user && user.login) {
-      // We still need user.login for fetching PRs
-      if (userStatusMessageP) userStatusMessageP.style.display = "none"; // Hide status message if successful
-
-      if (user.avatar_url && user.html_url && userAvatarImg && userAvatarLink) {
-        userAvatarImg.src = user.avatar_url;
-        userAvatarLink.href = user.html_url;
-        userAvatarLink.style.display = "inline-block";
-      } else {
-        if (userAvatarLink) userAvatarLink.style.display = "none";
-      }
-      if (prListContainer) prListContainer.style.display = "block";
-      if (prListLoader) prListLoader.style.display = "flex"; // Show spinner
-      if (prListUl) prListUl.innerHTML = ""; // Clear any previous list items
-      if (prListUl) prListUl.style.display = "none"; // Hide list while loading
-      if (noPRsMessage) noPRsMessage.style.display = "none"; // Hide no PRs message
-      if (prCountSpan) prCountSpan.textContent = "...";
-
-      const assignedPRs = await fetchAssignedPRs(user.login); // from auth.js
-
-      if (prListLoader) prListLoader.style.display = "none"; // Hide spinner
-      if (prListUl) prListUl.style.display = "block"; // Show list again
-
-      if (assignedPRs && assignedPRs.length > 0) {
-        noPRsMessage.style.display = "none";
-        prCountSpan.textContent = `${assignedPRs.length}`;
-        assignedPRs.forEach((pr) => {
-          const listItem = document.createElement("li");
-
-          // Author Avatar
-          if (pr.user && pr.user.avatar_url && pr.user.html_url) {
-            const authorAvatarLink = document.createElement("a");
-            authorAvatarLink.href = pr.user.html_url;
-            authorAvatarLink.target = "_blank";
-            authorAvatarLink.title =
-              "View profile of " + (pr.user.login || "author");
-            authorAvatarLink.classList.add("pr-author-avatar-link");
-
-            const authorAvatarImg = document.createElement("img");
-            authorAvatarImg.src = pr.user.avatar_url;
-            authorAvatarImg.alt = (pr.user.login || "Author") + " avatar";
-            authorAvatarImg.classList.add("pr-author-avatar");
-
-            authorAvatarLink.appendChild(authorAvatarImg);
-            listItem.appendChild(authorAvatarLink);
-          }
-
-          const prLink = document.createElement("a");
-          prLink.href = pr.html_url;
-          prLink.target = "_blank";
-          const repoName = pr.repository_url.split("/").pop();
-          prLink.textContent = `[${repoName}] ${pr.title}`;
-          listItem.appendChild(prLink);
-          prListUl.appendChild(listItem);
-        });
-      } else if (assignedPRs) {
-        prListUl.innerHTML = "";
-        if (noPRsMessage) noPRsMessage.style.display = "block";
-        prCountSpan.textContent = "0";
-      } else {
-        if (userStatusMessageP) {
-          userStatusMessageP.textContent = "Could not load PRs.";
-          userStatusMessageP.style.display = "inline";
-        }
-        if (noPRsMessage) noPRsMessage.style.display = "none";
-        prCountSpan.textContent = "Error";
-      }
-    } else {
-      if (prListLoader) prListLoader.style.display = "none"; // Ensure loader is hidden on user fetch error too
-      if (userStatusMessageP) {
-        userStatusMessageP.textContent = "Invalid PAT or error fetching user.";
-        userStatusMessageP.style.display = "inline";
-      }
-      if (userAvatarLink) userAvatarLink.style.display = "none";
-      if (prListContainer) prListContainer.style.display = "none";
-      if (prSummaryDiv) prSummaryDiv.style.display = "block";
-      if (prCountSpan) prCountSpan.textContent = "0";
-    }
-  }
-
   // Initial load
-  await displayPRs();
+  await displayAllPRs();
 });

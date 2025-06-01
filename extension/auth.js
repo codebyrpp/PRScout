@@ -11,6 +11,16 @@ async function getGitHubPAT() {
   });
 }
 
+// Function to set stored GitHub Personal Access Token
+async function setGitHubPAT(pat) {
+  return new Promise((resolve) => {
+    chrome.storage.sync.set({ githubPat: pat }, () => {
+      console.log("GitHub PAT saved.");
+      resolve();
+    });
+  });
+}
+
 // Function to get authorization headers for GitHub API requests
 async function getAuthHeaders() {
   const pat = await getGitHubPAT();
@@ -135,6 +145,63 @@ async function fetchAssignedPRs(username) {
   } catch (error) {
     console.error("Error fetching assigned PRs:", error);
     return [];
+  }
+}
+
+// Function to search GitHub for PRs based on a query string
+async function searchGitHubPRs(searchQuery) {
+  const headers = await getAuthHeaders();
+  if (!headers) {
+    console.warn("GitHub PAT not found. Cannot perform search.");
+    return []; // Return empty array if no PAT
+  }
+
+  // The searchQuery is expected to be pre-formed by the caller,
+  // e.g., "author:username is:pr is:open"
+  // We add sort and order for consistency. Adding 'archived:false' by default.
+  // However, if 'archived:true' or 'archived:false' is part of searchQuery, it will take precedence.
+  let fullQuery = searchQuery;
+  if (!searchQuery.includes("archived:")) {
+    fullQuery += " archived:false";
+  }
+
+  const url = `${GITHUB_API_BASE_URL}/search/issues?q=${encodeURIComponent(
+    fullQuery
+  )}&sort=updated&order=desc`;
+
+  console.log(`Searching GitHub with query: ${fullQuery}`);
+
+  try {
+    const response = await fetch(url, { headers });
+    if (!response.ok) {
+      console.error(
+        `Failed to search GitHub (${fullQuery}):`,
+        response.status,
+        await response.text()
+      );
+      // Handle rate limiting, similar to fetchAssignedPRs
+      if (
+        response.status === 403 &&
+        response.headers.get("X-RateLimit-Remaining") === "0"
+      ) {
+        const resetTimeEpoch =
+          parseInt(response.headers.get("X-RateLimit-Reset"), 10) * 1000;
+        const resetTime = new Date(resetTimeEpoch);
+        console.warn(
+          `Rate limit exceeded for search. Resets at ${resetTime.toLocaleTimeString()}`
+        );
+        // The caller (e.g., popup.js) can decide how to handle UI for empty results due to rate limiting.
+      }
+      return []; // Return empty array on error
+    }
+    const data = await response.json();
+    console.log(`Search results for "${fullQuery}":`, data);
+    // The search API returns issues. Filter items to ensure they have a pull_request object,
+    // as 'is:pr' in the query should make this redundant but good for safety.
+    return data.items.filter((item) => item.pull_request);
+  } catch (error) {
+    console.error(`Error during GitHub search (${fullQuery}):`, error);
+    return []; // Return empty array on network error or other issues
   }
 }
 
