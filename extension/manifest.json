@@ -8,7 +8,8 @@
     "storage",
     "identity",
     "bookmarks",
-    "alarms"
+    "alarms",
+    "tabs"
   ],
   "host_permissions": ["*://api.github.com/*"],
   "background": {

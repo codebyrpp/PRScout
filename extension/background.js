@@ -214,8 +214,15 @@ async function showNotification(pr) {
     title: `New PR Assigned: ${repoName}`,
     message: `Title: ${prTitle}\nAuthor: ${prAuthor}`,
     priority: 2,
-    // buttons: [{ title: "Open PR" }] // Button to open PR
   });
+
+  const handleNotificationClick = (notificationId) => {
+    if (notificationId === pr.html_url) {
+      chrome.tabs.create({ url: pr.html_url });
+    }
+  };
+
+  chrome.notifications.onClicked.addListener(handleNotificationClick);
 }
 
 // Main function to check for PRs
