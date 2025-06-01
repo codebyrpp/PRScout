@@ -336,6 +336,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Save options from the panel
   async function saveOptionsFromPanel() {
+    const saveButton = document.getElementById("popup-save-options");
+    const statusDiv = document.getElementById("popup-status");
+
+    // Get form values
     const pat = patInput.value.trim();
     const interval = parseInt(intervalInput.value, 10);
     const themeSelect = document.getElementById("popup-theme-select");
@@ -343,6 +347,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const footerCheckbox = document.getElementById("popup-show-footer");
     const showFooter = footerCheckbox ? footerCheckbox.checked : true;
 
+    // Validation
     if (!pat) {
       if (statusDiv) {
         statusDiv.textContent = "Error: GitHub PAT cannot be empty.";
@@ -360,39 +365,92 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-    await setGitHubPAT(pat); // from auth.js
-    await setThemePreference(theme); // Apply theme immediately
-    await setFooterPreference(showFooter); // Apply footer visibility immediately
-    chrome.storage.sync.set({ pollingInterval: interval }, () => {
-      if (statusDiv) {
-        statusDiv.textContent = "Options saved successfully!";
-        statusDiv.className = "status-message"; // Reset to default color
-      }
-      console.log(
-        "Options saved. PAT, interval, theme, and footer visibility updated."
-      );
-      // Notify background script of changes so it can reschedule alarms etc.
-      chrome.runtime.sendMessage({ type: "optionsChanged" }, (response) => {
-        if (chrome.runtime.lastError) {
-          console.warn(
-            "Error sending optionsChanged message:",
-            chrome.runtime.lastError.message
-          );
-        } else {
-          console.log(
-            "Background script notified of options change:",
-            response
-          );
+    // Set saving state
+    if (saveButton) {
+      saveButton.disabled = true;
+      saveButton.classList.add("saving");
+      saveButton.title = "Saving...";
+    }
+    if (statusDiv) {
+      statusDiv.textContent = "";
+      statusDiv.className = "status-message";
+    }
+
+    try {
+      await setGitHubPAT(pat); // from auth.js
+      await setThemePreference(theme); // Apply theme immediately
+      await setFooterPreference(showFooter); // Apply footer visibility immediately
+
+      chrome.storage.sync.set({ pollingInterval: interval }, () => {
+        console.log(
+          "Options saved. PAT, interval, theme, and footer visibility updated."
+        );
+
+        // Show success state
+        if (saveButton) {
+          saveButton.classList.remove("saving");
+          saveButton.classList.add("saved");
+          saveButton.title = "Saved!";
+
+          // Update icon to check mark
+          const svg = saveButton.querySelector("svg use");
+          if (svg) {
+            svg.setAttribute("href", "assets/icons.svg#icon-check-circle");
+          }
         }
+
+        // Clear any previous status messages
+        if (statusDiv) {
+          statusDiv.textContent = "";
+        }
+
+        // Notify background script of changes
+        chrome.runtime.sendMessage({ type: "optionsChanged" }, (response) => {
+          if (chrome.runtime.lastError) {
+            console.warn(
+              "Error sending optionsChanged message:",
+              chrome.runtime.lastError.message
+            );
+          } else {
+            console.log(
+              "Background script notified of options change:",
+              response
+            );
+          }
+        });
+
+        // Reset button state after 1 second
+        setTimeout(() => {
+          if (saveButton) {
+            saveButton.disabled = false;
+            saveButton.classList.remove("saved");
+            saveButton.title = "Save Options";
+
+            // Reset icon to save
+            const svg = saveButton.querySelector("svg use");
+            if (svg) {
+              svg.setAttribute("href", "assets/icons.svg#icon-save");
+            }
+          }
+          if (statusDiv) {
+            statusDiv.textContent = "";
+          }
+        }, 1000);
       });
-      // Optionally, you might want to re-fetch PRs or user info in the popup itself
-      // or simply close the panel and let the main view refresh on next auto-check.
-      // For simplicity, just show success message for now.
-      setTimeout(() => {
-        if (statusDiv) statusDiv.textContent = "";
-        // toggleOptionsPanel(); // Optionally close panel on save
-      }, 2000);
-    });
+    } catch (error) {
+      console.error("Error saving options:", error);
+
+      // Reset to normal state on error
+      if (saveButton) {
+        saveButton.disabled = false;
+        saveButton.classList.remove("saving");
+        saveButton.title = "Save Options";
+      }
+      if (statusDiv) {
+        statusDiv.textContent = "Error saving options. Please try again.";
+        statusDiv.className = "status-message error";
+      }
+    }
   }
 
   // Original openOptions function - now repurposed for the settings icon

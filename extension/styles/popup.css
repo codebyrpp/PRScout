@@ -275,11 +275,6 @@ hr {
   color: var(--text-primary); /* Match settings icon svg color */
 }
 
-.panel-header-spacer {
-  width: 30px; /* Approx width of the button to help center the title */
-  /* Alternatively, make button position absolute or use flexbox justify-content on header */
-}
-
 #close-options-panel {
   background: none;
   border: none;
@@ -359,19 +354,43 @@ hr {
 }
 
 #popup-save-options {
-  background-color: var(--bg-button-primary);
-  color: var(--text-button);
-  padding: 8px 16px;
-  font-size: 14px;
-  border: 1px solid var(--border-button);
-  border-radius: 6px;
-  cursor: pointer;
-  width: 100%;
-  margin-top: 10px;
+  position: relative;
+  transition: all 0.2s ease;
 }
 
-#popup-save-options:hover {
-  background-color: var(--bg-button-primary-hover);
+#popup-save-options:hover:not(:disabled):not(.saved) {
+  background-color: var(--bg-button-settings-hover);
+}
+
+#popup-save-options:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: var(--bg-button-settings-hover);
+}
+
+#popup-save-options.saving svg {
+  animation: pulse 0.75s ease-in-out infinite;
+}
+
+#popup-save-options.saved {
+  background-color: var(--bg-button-success);
+  color: var(--text-button);
+}
+
+#popup-save-options.saved svg {
+  animation: none;
+  color: var(--text-success);
+  stroke-width: 2.5; /* Make the check icon thicker for better visibility */
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 #popup-status {
