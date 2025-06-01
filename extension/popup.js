@@ -96,37 +96,55 @@ document.addEventListener("DOMContentLoaded", async () => {
   const saveButton = document.getElementById("popup-save-options");
   const statusDiv = document.getElementById("popup-status");
 
-  // Generic function to render PR items into a UL
+  // Generic function to render PR items into a UL using templates
   function renderPRItems(prListUl, prs) {
     prListUl.innerHTML = ""; // Clear previous items
     if (!prs || prs.length === 0) return;
 
+    // Get templates
+    const prItemTemplate = document.getElementById("pr-item-template");
+    const prItemNoAvatarTemplate = document.getElementById(
+      "pr-item-no-avatar-template"
+    );
+
+    if (!prItemTemplate || !prItemNoAvatarTemplate) {
+      console.error("PR item templates not found");
+      return;
+    }
+
     prs.forEach((pr) => {
-      const listItem = document.createElement("li");
+      let listItem;
+
+      // Choose template based on whether user info is available
       if (pr.user && pr.user.avatar_url && pr.user.html_url) {
-        const authorAvatarLink = document.createElement("a");
-        authorAvatarLink.href = pr.user.html_url;
-        authorAvatarLink.target = "_blank";
-        authorAvatarLink.title =
-          "View profile of " + (pr.user.login || "author");
-        authorAvatarLink.classList.add("pr-author-avatar-link");
-        const authorAvatarImg = document.createElement("img");
-        authorAvatarImg.src = pr.user.avatar_url;
-        authorAvatarImg.alt = (pr.user.login || "Author") + " avatar";
-        authorAvatarImg.classList.add("pr-author-avatar");
-        authorAvatarLink.appendChild(authorAvatarImg);
-        listItem.appendChild(authorAvatarLink);
+        // Use template with avatar
+        listItem = prItemTemplate.content.cloneNode(true);
+
+        // Populate avatar link and image
+        const avatarLink = listItem.querySelector(".pr-author-avatar-link");
+        const avatarImg = listItem.querySelector(".pr-author-avatar");
+
+        avatarLink.href = pr.user.html_url;
+        avatarLink.title = "View profile of " + (pr.user.login || "author");
+        avatarImg.src = pr.user.avatar_url;
+        avatarImg.alt = (pr.user.login || "Author") + " avatar";
+      } else {
+        // Use template without avatar
+        listItem = prItemNoAvatarTemplate.content.cloneNode(true);
       }
-      const prLink = document.createElement("a");
+
+      // Populate PR link (common to both templates)
+      const prLink = listItem.querySelector(".pr-link");
       prLink.href = pr.html_url;
-      prLink.target = "_blank";
+
       const repoName = pr.repository_url
         ? pr.repository_url.split("/").pop()
         : pr.repository
         ? pr.repository.name
         : "N/A";
       prLink.textContent = `[${repoName}] ${pr.title}`;
-      listItem.appendChild(prLink);
+
+      // Append to list
       prListUl.appendChild(listItem);
     });
   }

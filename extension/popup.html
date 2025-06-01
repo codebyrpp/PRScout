@@ -173,6 +173,23 @@
     <script src="browser-polyfill.min.js"></script>
     <script src="auth.js"></script>
     <script src="popup.js"></script>
+
+    <!-- Templates -->
+    <template id="pr-item-template">
+      <li>
+        <a class="pr-author-avatar-link" target="_blank">
+          <img class="pr-author-avatar" alt="" />
+        </a>
+        <a class="pr-link" target="_blank"></a>
+      </li>
+    </template>
+
+    <template id="pr-item-no-avatar-template">
+      <li>
+        <a class="pr-link" target="_blank"></a>
+      </li>
+    </template>
+
     <div id="options-panel" class="options-panel-hidden">
       <div class="options-panel-header">
         <button
