@@ -118,7 +118,8 @@ hr {
   border-bottom: none;
 }
 
-#pr-list a {
+#pr-list a,
+#pr-list a:visited {
   color: var(--text-link);
   text-decoration: none;
   font-weight: 500;
@@ -463,9 +464,9 @@ footer p a:visited {
   font-size: 13px;
 }
 
-/* Ensure visited links in PR list remain blue */
+.pr-list-items li a,
 .pr-list-items li a:visited {
-  color: var(--text-link); /* Match unvisited link color */
+  color: var(--text-link);
 }
 
 .pr-list-items li:first-child {
