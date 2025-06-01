@@ -12,7 +12,7 @@
   ],
   "host_permissions": ["*://api.github.com/*"],
   "background": {
-    "scripts": ["browser-polyfill.js", "auth.js", "background.js"]
+    "scripts": ["auth.js", "background.js"]
   },
   "action": {
     "default_popup": "popup.html"
