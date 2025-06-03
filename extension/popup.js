@@ -177,7 +177,26 @@ document.addEventListener("DOMContentLoaded", async () => {
         : pr.repository
         ? pr.repository.name
         : "N/A";
-      prLink.textContent = `[${repoName}] ${pr.title}`;
+
+      // Add branch badges if available
+      if (pr.head && pr.base) {
+        const branchBadgesTemplate = document.getElementById(
+          "branch-badges-template"
+        );
+        const branchBadges = branchBadgesTemplate.content.cloneNode(true);
+
+        // Set branch names
+        branchBadges.querySelector(".base-branch").textContent = pr.base.ref;
+        branchBadges.querySelector(".head-branch").textContent = pr.head.ref;
+
+        // Add branch badges after the PR title
+        prLink.appendChild(
+          document.createTextNode(`[${repoName}] ${pr.title} `)
+        );
+        prLink.appendChild(branchBadges);
+      } else {
+        prLink.textContent = `[${repoName}] ${pr.title}`;
+      }
 
       // Append to list
       prListUl.appendChild(listItem);

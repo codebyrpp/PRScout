@@ -202,20 +202,29 @@
     <script src="api.js"></script>
     <script src="popup.js"></script>
 
-    <!-- Templates -->
+    <!-- PR Item Templates -->
     <template id="pr-item-template">
       <li>
-        <a class="pr-author-avatar-link" target="_blank">
-          <img class="pr-author-avatar" alt="" />
+        <a class="pr-author-avatar-link" href="#" target="_blank">
+          <img class="pr-author-avatar" src="" alt="Author avatar" />
         </a>
-        <a class="pr-link" target="_blank"></a>
+        <a class="pr-link" href="#" target="_blank"></a>
       </li>
     </template>
 
     <template id="pr-item-no-avatar-template">
       <li>
-        <a class="pr-link" target="_blank"></a>
+        <a class="pr-link" href="#" target="_blank"></a>
       </li>
+    </template>
+
+    <!-- Branch Badge Template -->
+    <template id="branch-badges-template">
+      <span class="branch-badges">
+        <span class="branch-badge base-branch" title="Base branch"></span>
+        <span class="branch-badge arrow" aria-hidden="true">←</span>
+        <span class="branch-badge head-branch" title="Head branch"></span>
+      </span>
     </template>
 
     <div id="options-panel" class="options-panel-hidden">

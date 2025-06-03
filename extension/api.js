@@ -138,10 +138,29 @@ async function fetchAssignedPRs(username) {
     console.log("Assigned PRs data:", data);
     // Filter out any items that are not pull requests (though `is:pr` should handle this)
     // Also, ensure pull_request object exists
-    return data.items.filter(
+    const filteredPRs = data.items.filter(
       (item) =>
         item.pull_request && item.assignee && item.assignee.login === username
     );
+
+    // Fetch additional details for each PR
+    const prsWithDetails = await Promise.all(
+      filteredPRs.map((pr) =>
+        fetch(`${pr.pull_request.url}`, { headers })
+          .then((response) => response.json())
+          .then((details) => ({
+            ...pr,
+            head: details.head,
+            base: details.base,
+          }))
+          .catch((error) => {
+            console.error("Error fetching PR details:", error);
+            return pr;
+          })
+      )
+    );
+
+    return prsWithDetails;
   } catch (error) {
     console.error("Error fetching assigned PRs:", error);
     return [];
@@ -198,7 +217,26 @@ async function searchGitHubPRs(searchQuery) {
     console.log(`Search results for "${fullQuery}":`, data);
     // The search API returns issues. Filter items to ensure they have a pull_request object,
     // as 'is:pr' in the query should make this redundant but good for safety.
-    return data.items.filter((item) => item.pull_request);
+    const filteredPRs = data.items.filter((item) => item.pull_request);
+
+    // Fetch additional details for each PR to get branch information
+    const prsWithDetails = await Promise.all(
+      filteredPRs.map((pr) =>
+        fetch(`${pr.pull_request.url}`, { headers })
+          .then((response) => response.json())
+          .then((details) => ({
+            ...pr,
+            head: details.head,
+            base: details.base,
+          }))
+          .catch((error) => {
+            console.error("Error fetching PR details:", error);
+            return pr;
+          })
+      )
+    );
+
+    return prsWithDetails;
   } catch (error) {
     console.error(`Error during GitHub search (${fullQuery}):`, error);
     return []; // Return empty array on network error or other issues

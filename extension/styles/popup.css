@@ -538,3 +538,46 @@ footer p a:visited {
   font-size: 13px;
   color: var(--text-secondary);
 }
+
+/* Branch badges styling */
+.branch-badges {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.85em;
+  vertical-align: middle;
+  user-select: none;
+}
+
+.branch-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas,
+    Liberation Mono, monospace;
+  font-size: 0.9em;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.base-branch,
+.head-branch {
+  background-color: var(--bg-badge);
+  color: var(--text-primary);
+}
+
+.arrow {
+  margin: 0 4px;
+  color: var(--color-fg-muted);
+  font-size: 0.9em;
+  cursor: default;
+}
+
+/* Ensure the PR link text wraps properly with badges */
+.pr-link {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  text-decoration: none;
+}
