@@ -272,6 +272,50 @@ async function updateKnownPRUrls(newPRUrls) {
   await chrome.storage.local.set({ knownPRUrls: newPRUrls });
 }
 
+// Function to validate a GitHub PAT
+async function validatePAT(pat) {
+  try {
+    const response = await fetch(`${GITHUB_API_BASE_URL}/user`, {
+      headers: {
+        Authorization: `Bearer ${pat}`,
+        Accept: "application/vnd.github.v3+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+      },
+    });
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        return {
+          valid: false,
+          error:
+            "Invalid token. Please check your GitHub Personal Access Token.",
+        };
+      }
+      return {
+        valid: false,
+        error: `GitHub API error: ${response.status} ${response.statusText}`,
+      };
+    }
+
+    const user = await response.json();
+    if (!user || !user.login) {
+      return {
+        valid: false,
+        error: "Could not validate token. Please try again.",
+      };
+    }
+
+    return { valid: true };
+  } catch (error) {
+    console.error("Error validating PAT:", error);
+    return {
+      valid: false,
+      error:
+        "Error validating token. Please check your connection and try again.",
+    };
+  }
+}
+
 // Expose functions for background.js or other scripts if not using modules directly
 // For service workers, it's common to have these functions in the global scope
 // or explicitly attach them to 'self' if needed by other parts of the worker.
