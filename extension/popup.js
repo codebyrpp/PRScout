@@ -79,10 +79,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   // const userLoginP = document.getElementById("user-login"); // Removed
   // const userNameP = document.getElementById("user-name");   // Removed
   const userStatusMessageP = document.getElementById("user-status-message");
-  const optionsButton = document.getElementById("settings-icon-button"); // Changed ID
+  const optionsButton = document.getElementById("settings-icon-button");
   const openOptionsPageButton = document.getElementById("open-options-page");
-  const userAvatarImg = document.getElementById("user-avatar"); // Added for avatar
-  const userAvatarLink = document.getElementById("user-avatar-link"); // Added for avatar link
+  const userAvatarImg = document.getElementById("user-avatar");
+  const userAvatarLink = document.getElementById("user-avatar-link");
+  const userAvatarContainer = document.getElementById("user-avatar-container");
+  const userAvatarLoading = document.getElementById("user-avatar-loading");
   const prSummaryDiv = document.getElementById("pr-summary");
   const allPRsSectionsContainer = document.getElementById(
     "all-prs-sections-container"
@@ -269,7 +271,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (userStatusMessageP) {
         userStatusMessageP.style.display = "none";
       }
-      if (userAvatarLink) userAvatarLink.style.display = "none";
+      if (userAvatarContainer) userAvatarContainer.style.display = "none";
       if (prSummaryDiv) prSummaryDiv.style.display = "block";
       if (allPRsSectionsContainer)
         allPRsSectionsContainer.style.display = "none";
@@ -284,16 +286,31 @@ document.addEventListener("DOMContentLoaded", async () => {
       userStatusMessageP.textContent = "...";
       userStatusMessageP.style.display = "inline";
     }
-    const user = await fetchUserDetails(); // From auth.js
+
+    // Show avatar container with loading state
+    if (userAvatarContainer) {
+      userAvatarContainer.style.display = "block";
+      if (userAvatarLink) userAvatarLink.style.display = "none";
+      if (userAvatarLoading) userAvatarLoading.style.display = "flex";
+    }
+
+    const user = await fetchUserDetails();
 
     if (user && user.login) {
       if (userStatusMessageP) userStatusMessageP.style.display = "none";
-      if (user.avatar_url && user.html_url && userAvatarImg && userAvatarLink) {
+      if (
+        user.avatar_url &&
+        user.html_url &&
+        userAvatarImg &&
+        userAvatarLink &&
+        userAvatarContainer
+      ) {
         userAvatarImg.src = user.avatar_url;
         userAvatarLink.href = user.html_url;
         userAvatarLink.style.display = "inline-block";
+        if (userAvatarLoading) userAvatarLoading.style.display = "none";
       } else {
-        if (userAvatarLink) userAvatarLink.style.display = "none";
+        if (userAvatarContainer) userAvatarContainer.style.display = "none";
       }
 
       // Fetch all categories in parallel
@@ -310,7 +327,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           "Invalid PAT or error fetching user. Please check your PAT and try again.";
         userStatusMessageP.style.display = "inline";
       }
-      if (userAvatarLink) userAvatarLink.style.display = "none";
+      if (userAvatarContainer) userAvatarContainer.style.display = "none";
       if (allPRsSectionsContainer)
         allPRsSectionsContainer.style.display = "none";
       if (prSummaryDiv) prSummaryDiv.style.display = "block";

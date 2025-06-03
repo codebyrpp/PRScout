@@ -624,3 +624,36 @@ footer p a:visited {
   padding: 4px 0;
   line-height: 1.3;
 }
+
+/* Avatar loading styles */
+#user-avatar-container {
+  position: relative;
+  width: 32px;
+  height: 32px;
+}
+
+.avatar-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-badge);
+  border-radius: 50%;
+  color: var(--text-secondary);
+}
+
+.avatar-loading svg {
+  opacity: 0.6;
+}
+
+#user-avatar {
+  transition: opacity 0.2s ease-in-out;
+}
+
+#user-avatar-link:hover #user-avatar {
+  opacity: 0.8;
+}

@@ -17,19 +17,31 @@
             id="user-status-message"
             style="margin: 0 8px 0 0; display: none; color: #586069"
           ></p>
-          <a
-            id="user-avatar-link"
-            href="#"
-            target="_blank"
-            style="display: none; line-height: 0"
-          >
-            <img
-              id="user-avatar"
-              src=""
-              alt="User Avatar"
-              style="width: 32px; height: 32px; border-radius: 50%"
-            />
-          </a>
+          <div id="user-avatar-container" style="display: none; line-height: 0">
+            <a
+              id="user-avatar-link"
+              href="#"
+              target="_blank"
+              style="display: none; line-height: 0"
+            >
+              <img
+                id="user-avatar"
+                src="assets/fallback-avatar.webp"
+                alt="User Avatar"
+                style="width: 32px; height: 32px; border-radius: 50%"
+              />
+            </a>
+            <div id="user-avatar-loading" class="avatar-loading">
+              <svg
+                viewBox="0 0 24 24"
+                width="32"
+                height="32"
+                style="animation: spin 1s linear infinite"
+              >
+                <use href="assets/icons.svg#icon-spinner"></use>
+              </svg>
+            </div>
+          </div>
           <a
             href="#"
             id="open-new-window-button"
