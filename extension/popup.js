@@ -68,6 +68,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   await initializeTheme();
   await initializeFooter();
 
+  // Get DOM elements for initial PAT setup
+  const notSignedInView = document.getElementById("not-signed-in-view");
+  const signedInView = document.getElementById("signed-in-view");
+  const initialPatInput = document.getElementById("initial-github-pat");
+  const initialPatError = document.getElementById("initial-pat-error-message");
+  const initialSaveButton = document.getElementById("initial-save-pat");
+
   // const userInfoP = document.getElementById("user-info"); // No longer used directly for detailed user name/login
   // const userLoginP = document.getElementById("user-login"); // Removed
   // const userNameP = document.getElementById("user-name");   // Removed
@@ -260,8 +267,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const pat = await getGitHubPAT();
     if (!pat) {
       if (userStatusMessageP) {
-        userStatusMessageP.textContent = "GitHub PAT not set.";
-        userStatusMessageP.style.display = "inline";
+        userStatusMessageP.style.display = "none";
       }
       if (userAvatarLink) userAvatarLink.style.display = "none";
       if (prSummaryDiv) prSummaryDiv.style.display = "block";
@@ -360,55 +366,24 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // Function to validate PAT by testing GitHub API
-  async function validatePAT(pat) {
-    try {
-      const response = await fetch("https://api.github.com/user", {
-        headers: {
-          Authorization: `Bearer ${pat}`,
-          Accept: "application/vnd.github.v3+json",
-          "X-GitHub-Api-Version": "2022-11-28",
-        },
-      });
-
-      if (response.ok) {
-        return { valid: true };
-      } else if (response.status === 401) {
-        return {
-          valid: false,
-          error:
-            "This token isn't working. Please check if it's correct or create a new one.",
-        };
-      } else if (response.status === 403) {
-        const remaining = response.headers.get("X-RateLimit-Remaining");
-        if (remaining === "0") {
-          return {
-            valid: false,
-            error:
-              "Too many requests right now. Please wait a moment and try again.",
-          };
-        }
-        return {
-          valid: false,
-          error:
-            "This token doesn't have the right permissions. Make sure it can read Pull Requests.",
-        };
-      } else {
-        return {
-          valid: false,
-          error: "Something went wrong connecting to GitHub. Please try again.",
-        };
-      }
-    } catch (error) {
-      return {
-        valid: false,
-        error:
-          "Can't connect to GitHub right now. Check your internet connection.",
-      };
-    }
+  // Add event listeners for quick settings
+  const themeSelect = document.getElementById("popup-theme-select");
+  if (themeSelect) {
+    themeSelect.addEventListener("change", async (e) => {
+      const theme = e.target.value;
+      await setThemePreference(theme);
+    });
   }
 
-  // Save options from the panel
+  const footerCheckbox = document.getElementById("popup-show-footer");
+  if (footerCheckbox) {
+    footerCheckbox.addEventListener("change", async (e) => {
+      const showFooter = e.target.checked;
+      await setFooterPreference(showFooter);
+    });
+  }
+
+  // Save options from the panel (now only for GitHub settings)
   async function saveOptionsFromPanel() {
     const saveButton = document.getElementById("popup-save-options");
     const statusDiv = document.getElementById("popup-status");
@@ -420,10 +395,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Get form values
     const pat = patInput.value.trim();
     const interval = parseInt(intervalInput.value, 10);
-    const themeSelect = document.getElementById("popup-theme-select");
-    const theme = themeSelect ? themeSelect.value : "system";
-    const footerCheckbox = document.getElementById("popup-show-footer");
-    const showFooter = footerCheckbox ? footerCheckbox.checked : true;
 
     // Check if PAT is actually changing
     const patChanged = currentPat !== pat;
@@ -483,14 +454,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
       }
 
-      await setGitHubPAT(pat); // from auth.js
-      await setThemePreference(theme); // Apply theme immediately
-      await setFooterPreference(showFooter); // Apply footer visibility immediately
-
+      await setGitHubPAT(pat);
       chrome.storage.sync.set({ pollingInterval: interval }, async () => {
-        console.log(
-          "Options saved. PAT, interval, theme, and footer visibility updated."
-        );
+        console.log("GitHub settings saved.");
 
         // Show success state
         if (saveButton) {
@@ -623,6 +589,110 @@ document.addEventListener("DOMContentLoaded", async () => {
         patErrorDiv.textContent = "";
       }
     });
+  }
+
+  // Function to validate and save initial PAT
+  async function handleInitialPatSave() {
+    const pat = initialPatInput.value.trim();
+
+    // Clear previous errors
+    initialPatError.style.display = "none";
+    initialPatError.textContent = "";
+
+    // Basic validation
+    if (!pat) {
+      initialPatError.textContent =
+        "Please enter your GitHub token to get started.";
+      initialPatError.style.display = "block";
+      return;
+    }
+
+    // Set saving state
+    initialSaveButton.disabled = true;
+    initialSaveButton.innerHTML = `
+      <svg viewBox="0 0 24 24" width="16" height="16" style="vertical-align: middle; margin-right: 4px; animation: spin 1s linear infinite;">
+        <use href="assets/icons.svg#icon-check-circle"></use>
+      </svg>
+      Validating...
+    `;
+
+    try {
+      // Validate PAT with GitHub API
+      const validation = await validatePAT(pat);
+      if (!validation.valid) {
+        initialPatError.textContent = validation.error;
+        initialPatError.style.display = "block";
+        initialSaveButton.disabled = false;
+        initialSaveButton.innerHTML = `
+          <svg viewBox="0 0 24 24" width="16" height="16" style="vertical-align: middle; margin-right: 4px;">
+            <use href="assets/icons.svg#icon-save"></use>
+          </svg>
+          Save Token
+        `;
+        return;
+      }
+
+      // Save PAT
+      await setGitHubPAT(pat);
+
+      // Show success state
+      initialSaveButton.innerHTML = `
+        <svg viewBox="0 0 24 24" width="16" height="16" style="vertical-align: middle; margin-right: 4px;">
+          <use href="assets/icons.svg#icon-check-circle"></use>
+        </svg>
+        Token Saved!
+      `;
+
+      // Switch views and reload PRs
+      notSignedInView.style.display = "none";
+      signedInView.style.display = "block";
+      await displayAllPRs();
+
+      // Reset button after delay
+      setTimeout(() => {
+        initialSaveButton.disabled = false;
+        initialSaveButton.innerHTML = `
+          <svg viewBox="0 0 24 24" width="16" height="16" style="vertical-align: middle; margin-right: 4px;">
+            <use href="assets/icons.svg#icon-save"></use>
+          </svg>
+          Save Token
+        `;
+      }, 2000);
+    } catch (error) {
+      console.error("Error saving initial PAT:", error);
+      initialPatError.textContent = "Error saving token. Please try again.";
+      initialPatError.style.display = "block";
+      initialSaveButton.disabled = false;
+      initialSaveButton.innerHTML = `
+        <svg viewBox="0 0 24 24" width="16" height="16" style="vertical-align: middle; margin-right: 4px;">
+          <use href="assets/icons.svg#icon-save"></use>
+        </svg>
+        Save Token
+      `;
+    }
+  }
+
+  // Add event listeners for initial PAT setup
+  if (initialSaveButton) {
+    initialSaveButton.addEventListener("click", handleInitialPatSave);
+  }
+  if (initialPatInput) {
+    initialPatInput.addEventListener("input", () => {
+      if (initialPatError.style.display !== "none") {
+        initialPatError.style.display = "none";
+        initialPatError.textContent = "";
+      }
+    });
+  }
+
+  // Check if user is already signed in
+  const pat = await getGitHubPAT();
+  if (pat) {
+    notSignedInView.style.display = "none";
+    signedInView.style.display = "block";
+  } else {
+    notSignedInView.style.display = "block";
+    signedInView.style.display = "none";
   }
 
   // Initial load

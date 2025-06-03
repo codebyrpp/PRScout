@@ -581,3 +581,46 @@ footer p a:visited {
   gap: 4px;
   text-decoration: none;
 }
+
+/* Initial PAT input styles */
+#initial-github-pat {
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+#initial-github-pat:hover {
+  border-color: var(--border-hover);
+}
+
+#initial-github-pat:focus {
+  border-color: var(--text-link);
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+#initial-save-pat {
+  transition: background-color 0.2s ease-in-out;
+}
+
+#initial-save-pat:hover:not(:disabled) {
+  background-color: var(--bg-button-primary-hover);
+}
+
+#initial-save-pat:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+#initial-save-pat svg {
+  transition: transform 0.2s ease-in-out;
+}
+
+#initial-save-pat:hover:not(:disabled) svg {
+  transform: scale(1.1);
+}
+
+/* Ensure the error message is properly styled */
+#initial-pat-error-message {
+  margin-top: 8px;
+  padding: 4px 0;
+  line-height: 1.3;
+}

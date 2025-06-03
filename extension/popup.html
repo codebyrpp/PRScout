@@ -85,8 +85,104 @@
 
       <div class="main-content">
         <div id="pr-summary">
-          <p>Open the options to set your GitHub Token and preferences.</p>
-          <p><button id="open-options-page">Open Options</button></p>
+          <div id="not-signed-in-view">
+            <h2
+              style="margin-top: 0; font-size: 18px; color: var(--text-primary)"
+            >
+              Welcome to PRScout! 👋
+            </h2>
+            <p style="margin-bottom: 16px; color: var(--text-secondary)">
+              To get started, you'll need a GitHub Personal Access Token:
+            </p>
+
+            <div class="form-group" style="margin-bottom: 16px">
+              <label
+                for="initial-github-pat"
+                style="
+                  display: block;
+                  margin-bottom: 8px;
+                  font-weight: 500;
+                  color: var(--text-primary);
+                "
+                >GitHub Personal Access Token:</label
+              >
+              <input
+                type="password"
+                id="initial-github-pat"
+                name="initial-github-pat"
+                placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
+                style="
+                  width: 100%;
+                  box-sizing: border-box;
+                  padding: 8px;
+                  border: 1px solid var(--border-secondary);
+                  border-radius: 6px;
+                  background-color: var(--bg-primary);
+                  color: var(--text-primary);
+                  font-size: 14px;
+                "
+              />
+              <div
+                id="initial-pat-error-message"
+                class="pat-error-message"
+                style="display: none"
+              ></div>
+              <p
+                class="info"
+                style="
+                  margin-top: 8px;
+                  font-size: 12px;
+                  color: var(--text-secondary);
+                "
+              >
+                Required for accessing GitHub API. For best results, use a
+                fine-grained token with Repository Permissions to Pull Requests
+                with read access.
+                <a
+                  href="https://github.com/settings/tokens"
+                  target="_blank"
+                  style="color: var(--text-link)"
+                  >Create a token here</a
+                >
+              </p>
+            </div>
+
+            <button
+              id="initial-save-pat"
+              style="
+                width: 100%;
+                background-color: var(--bg-button-primary);
+                color: var(--text-button);
+                border: 1px solid var(--border-button);
+                border-radius: 6px;
+                padding: 8px 16px;
+                font-size: 14px;
+                font-weight: 500;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              "
+            >
+              <svg
+                viewBox="0 0 16 16"
+                width="16"
+                height="16"
+                style="vertical-align: middle; margin-right: 4px"
+              >
+                <path
+                  fill="currentColor"
+                  d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"
+                ></path>
+              </svg>
+              Save Token
+            </button>
+          </div>
+
+          <div id="signed-in-view" style="display: none">
+            <p>Open the options to set your GitHub Token and preferences.</p>
+            <p><button id="open-options-page">Open Options</button></p>
+          </div>
         </div>
 
         <div id="all-prs-sections-container" style="display: none">
@@ -254,67 +350,105 @@
           title="Save Options"
           class="panel-header-button"
         >
-          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-            <use href="assets/icons.svg#icon-save"></use>
+          <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+            <path
+              fill="currentColor"
+              d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"
+            ></path>
           </svg>
         </button>
       </div>
       <div class="options-panel-content">
-        <div class="form-group">
-          <label for="popup-github-pat">GitHub Personal Access Token:</label>
-          <input
-            type="password"
-            id="popup-github-pat"
-            name="popup-github-pat"
-            size="35"
-          />
-          <div
-            id="pat-error-message"
-            class="pat-error-message"
-            style="display: none"
-          ></div>
-          <p class="info">
-            Required for accessing GitHub API. For best results, use a fine
-            grained token with Repository Permissions to Pull Requests with read
-            access.
-          </p>
-        </div>
-        <div class="form-group">
-          <label for="popup-polling-interval"
-            >Polling Interval (seconds):</label
+        <!-- Quick Settings Section -->
+        <div class="quick-settings-section">
+          <h3
+            style="
+              margin-top: 0;
+              margin-bottom: 12px;
+              font-size: 14px;
+              color: var(--text-secondary);
+            "
           >
-          <input
-            type="number"
-            id="popup-polling-interval"
-            name="popup-polling-interval"
-            min="10"
-            value="60"
-          />
-          <p class="info">Minimum 10 seconds. Default is 60 seconds.</p>
+            Quick Settings
+          </h3>
+          <div class="form-group" style="margin-bottom: 12px">
+            <label
+              for="popup-theme-select"
+              style="display: inline-block; margin-right: 8px"
+              >Theme:</label
+            >
+            <select
+              id="popup-theme-select"
+              name="popup-theme-select"
+              style="width: auto"
+            >
+              <option value="system">System Default</option>
+              <option value="light">Light</option>
+              <option value="dark">Dark</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom: 0">
+            <label class="checkbox-label">
+              <input
+                type="checkbox"
+                id="popup-show-footer"
+                name="popup-show-footer"
+                checked
+              />
+              Show footer
+            </label>
+          </div>
         </div>
-        <div class="form-group">
-          <label for="popup-theme-select">Theme:</label>
-          <select id="popup-theme-select" name="popup-theme-select">
-            <option value="system">System Default</option>
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
-          </select>
-          <p class="info">Choose your preferred theme.</p>
-        </div>
-        <div class="form-group">
-          <label class="checkbox-label">
+
+        <hr style="margin: 16px 0" />
+
+        <!-- GitHub Settings Section -->
+        <div class="github-settings-section">
+          <h3
+            style="
+              margin-top: 0;
+              margin-bottom: 12px;
+              font-size: 14px;
+              color: var(--text-secondary);
+            "
+          >
+            GitHub Settings
+          </h3>
+          <div class="form-group">
+            <label for="popup-github-pat">GitHub Personal Access Token:</label>
             <input
-              type="checkbox"
-              id="popup-show-footer"
-              name="popup-show-footer"
-              checked
+              type="password"
+              id="popup-github-pat"
+              name="popup-github-pat"
+              placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
+              size="35"
             />
-            Show footer
-          </label>
-          <p class="info">
-            Display the footer with project link at the bottom of the popup.
-          </p>
+            <div
+              id="pat-error-message"
+              class="pat-error-message"
+              style="display: none"
+            ></div>
+            <p class="info">
+              Required for accessing GitHub API. For best results, use a fine
+              grained token with Repository Permissions to Pull Requests with
+              read access.
+            </p>
+          </div>
+          <div class="form-group">
+            <label for="popup-polling-interval"
+              >Polling Interval (seconds):</label
+            >
+            <input
+              type="number"
+              id="popup-polling-interval"
+              name="popup-polling-interval"
+              min="10"
+              value="60"
+            />
+            <p class="info">Minimum 10 seconds. Default is 60 seconds.</p>
+          </div>
         </div>
+
         <div id="popup-status" class="status-message"></div>
       </div>
     </div>
