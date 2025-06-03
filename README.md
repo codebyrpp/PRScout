@@ -9,6 +9,8 @@
   </span>
 </h1>
 
+![](./docs/screenshot.png)
+
 ## Motivation 💡
 
 I've found that managing pull requests efficiently is important for my own productivity and collaboration with others on GitHub. That's why I'm working on this personal project - to create a tool that provides actionable notifications for pull requests, with organization features inspired by Arc Live Folders, and seamless integration with my browser's bookmarks.
