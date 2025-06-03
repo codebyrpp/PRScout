@@ -11,19 +11,19 @@
 
 ## Motivation 💡
 
-I've found that managing pull requests efficiently is crucial for my own productivity and collaboration with others on GitHub. That's why I'm working on this personal project - to create a tool that provides real-time, actionable notifications for pull requests assigned to me, with organization features inspired by Arc Live Folders, and seamless integration with my browser's bookmarks.
+I've found that managing pull requests efficiently is important for my own productivity and collaboration with others on GitHub. That's why I'm working on this personal project - to create a tool that provides actionable notifications for pull requests, with organization features inspired by Arc Live Folders, and seamless integration with my browser's bookmarks.
 
 ## Overview 📖
 
-PRScout is a browser extension for Chrome and Firefox browsers that I built to solve my own workflow challenges. It notifies you in real-time when a pull request is assigned to you, and helps you organize, track, and manage your PRs directly from your browser.
+PRScout is a browser extension for Chrome and Firefox browsers that I built to solve my own workflow challenges. It notifies you when a pull request is assigned to you, and helps you organize, track, and manage your PRs directly from your browser.
 
 ## Features 🚀
 
-- **Real-time Notifications**: Get notified when PRs are assigned to you
+- **Notifications**: Get notified when PRs are assigned to you
 - **Multi-category PR Management**: View PRs assigned to you, created by you, requesting your review, and mentioning you
 - **Smart Bookmarks Integration**: Automatic bookmark creation/removal in a dedicated folder
 - **Theme Support**: Light, dark, and system preference themes
-- **Cross-browser Compatibility**: Works on Chrome, Firefox, and other Chromium-based browsers
+- **Cross-browser Compatibility**: Works on Chrome, Firefox, and other Chromium and Firefox-based browsers
 - **Configurable Polling**: Adjust notification frequency to your needs
 
 ## Installation 📦
@@ -91,7 +91,7 @@ pullradar/
 │   ├── popup.html     # Popup interface
 │   ├── popup.js       # Popup logic
 │   ├── background.js  # Background service worker
-│   ├── auth.js        # GitHub API integration
+│   ├── api.js        # GitHub API integration
 │   └── styles/        # CSS with theme support
 ├── docs/              # Documentation
 ├── README.md
@@ -137,14 +137,6 @@ _Note: This is a personal project, so please be patient with response times. I'l
 ## License 📄
 
 This project is open source and available under the [MIT License](./LICENSE).
-
-## Contributors ✨
-
-Thanks to all the contributors who have helped make PRScout better!
-
-<!-- Contributors list will be automatically updated -->
-
-_Contributor list coming soon!_
 
 ## Support 💬
 
