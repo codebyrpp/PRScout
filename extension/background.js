@@ -215,14 +215,6 @@ async function showNotification(pr) {
     message: `Title: ${prTitle}\nAuthor: ${prAuthor}`,
     priority: 2,
   });
-
-  const handleNotificationClick = (notificationId) => {
-    if (notificationId === pr.html_url) {
-      chrome.tabs.create({ url: pr.html_url });
-    }
-  };
-
-  chrome.notifications.onClicked.addListener(handleNotificationClick);
 }
 
 // Main function to check for PRs
@@ -371,19 +363,19 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   return false;
 });
 
-// Listener for notification click
-chrome.notifications.onClicked.addListener((notificationId) => {
-  // notificationId is the PR URL
-  chrome.tabs.create({ url: notificationId });
-  chrome.notifications.clear(notificationId); // Clear the notification once clicked
-});
-
 // Optional: Listen for bookmark removal to keep knownPRUrls in sync if manually deleted.
 // This is more complex and might be overkill, as our main sync is from API.
 // chrome.bookmarks.onRemoved.addListener(async (id, removeInfo) => {
 //   // If a bookmark is removed from our folder, we might want to remove it from knownPRUrls
 //   // This requires checking if removeInfo.node.url was one of our PRs
 // });
+
+// Global listener for notification clicks
+chrome.notifications.onClicked.addListener((notificationId) => {
+  // notificationId is the PR URL
+  chrome.tabs.create({ url: notificationId });
+  chrome.notifications.clear(notificationId); // Clear the notification once clicked
+});
 
 console.log("Background script loaded.");
 // Initial scheduling of the alarm when the extension loads (not just onInstalled)
