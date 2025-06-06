@@ -38,7 +38,7 @@ _Coming soon - extension will be available on Chrome Web Store and Firefox Add-o
 
 #### Chrome/Edge/Chromium-based browsers:
 
-1. Clone this repository: `git clone https://github.com/codebyrpp/pullradar.git`
+1. Clone this repository: `git clone https://github.com/codebyrpp/PRScout.git`
 2. Open `chrome://extensions/` in your browser
 3. Enable "Developer mode" (toggle in top right)
 4. Click "Load unpacked"
@@ -46,7 +46,7 @@ _Coming soon - extension will be available on Chrome Web Store and Firefox Add-o
 
 #### Firefox:
 
-1. Clone this repository: `git clone https://github.com/codebyrpp/pullradar.git`
+1. Clone this repository: `git clone https://github.com/codebyrpp/PRScout.git`
 2. Open `about:debugging` in Firefox
 3. Click "This Firefox"
 4. Click "Load Temporary Add-on"
@@ -78,8 +78,8 @@ _Coming soon - extension will be available on Chrome Web Store and Firefox Add-o
 
 ```bash
 # Clone the repository
-git clone https://github.com/codebyrpp/pullradar.git
-cd pullradar
+git clone https://github.com/codebyrpp/PRScout.git
+cd PRScout
 
 # Load the extension in your browser (see Installation section above)
 ```
@@ -87,7 +87,7 @@ cd pullradar
 ### Project Structure
 
 ```
-pullradar/
+PRScout/
 ├── extension/           # Main extension files
 │   ├── manifest.json   # Extension manifest
 │   ├── popup.html     # Popup interface
@@ -142,9 +142,9 @@ This project is open source and available under the [MIT License](./LICENSE).
 
 ## Support 💬
 
-- **Bug Reports**: [GitHub Issues](https://github.com/codebyrpp/pullradar/issues)
-- **Feature Requests**: [GitHub Issues](https://github.com/codebyrpp/pullradar/issues)
-- **Questions**: [GitHub Discussions](https://github.com/codebyrpp/pullradar/discussions)
+- **Bug Reports**: [GitHub Issues](https://github.com/codebyrpp/PRScout/issues)
+- **Feature Requests**: [GitHub Issues](https://github.com/codebyrpp/PRScout/issues)
+- **Questions**: [GitHub Discussions](https://github.com/codebyrpp/PRScout/discussions)
 
 ---
 
